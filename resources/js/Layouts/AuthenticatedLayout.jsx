@@ -46,9 +46,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <ClipboardDocumentListIcon className="inline h-5 w-5 mr-1" />
                                 Projects
                             </NavLink>
-                            <NavLink href="/contact">
-                                <PhoneIcon className="inline h-5 w-5 mr-1" />
-                                Contact
+                            <NavLink href="/sample">
+                                {/* <PhoneIcon className="inline h-5 w-5 mr-1" /> */}
+                                sample
                             </NavLink>
                         </div>
 
