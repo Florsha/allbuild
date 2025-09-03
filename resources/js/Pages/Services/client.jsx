@@ -7,8 +7,13 @@ import {
   HomeModernIcon,
 } from "@heroicons/react/24/outline";
 
+import ProjectOverview from "./ProjectOverview";
+import ClientInfo from "./ClientInfo";
+
 export default function Services() {
   const [activeModal, setActiveModal] = useState(null); // track which modal is open
+  const [step, setStep] = useState(1); // stepper control
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const services = [
     {
@@ -54,6 +59,11 @@ export default function Services() {
     "WaterLine",
     "Plumbing",
   ];
+
+    const handleCategoryClick = (cat) => {
+    setSelectedCategory(cat);
+    setStep(1); // reset stepper
+  };
 
   return (
     <AuthenticatedLayout>
@@ -115,61 +125,135 @@ export default function Services() {
         </div>
       </div>
 
-      {activeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all scale-95 animate-fadeIn">
-            {/* Header Image */}
-            <div className="relative h-48 md:h-60 w-full">
-              <img
-                src={
-                  services.find((s) => s.key === activeModal)?.image ||
-                  "https://via.placeholder.com/800"
-                }
-                alt="Service"
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setActiveModal(null)}
-                className="absolute top-3 right-3 bg-white/80 rounded-full p-2 text-gray-700 hover:bg-white hover:text-red-500 shadow"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Content */}
+    {activeModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full h-[90vh] overflow-y-auto transform transition-all scale-95 animate-fadeIn">
+          {/* Header Image */}
+          <div className="relative h-56 md:h-72 w-full">
+            <img
+              src={
+                services.find((s) => s.key === activeModal)?.image ||
+                "https://via.placeholder.com/800"
+              }
+              alt="Service"
+              className="w-full h-full object-cover"
+            />
+            <button
+              onClick={() => {
+                setActiveModal(null);
+                setStep(1);
+                setSelectedCategory(null);
+              }}
+              className="absolute top-3 right-3 bg-white/80 rounded-full p-2 text-gray-700 hover:bg-white hover:text-red-500 shadow"
+            >
+              ✕
+            </button>
+          </div>
+           {/* Modal Content */}
             <div className="p-6 md:p-8 space-y-6">
-              {services
-                .filter((s) => s.key === activeModal)
-                .map((s) => (
-                  <div key={s.key} className="space-y-4">
-                    <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                      {s.icon} {s.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">{s.details}</p>
+              {!selectedCategory ? (
+                <>
+                  {services
+                    .filter((s) => s.key === activeModal)
+                    .map((s) => (
+                      <div key={s.key} className="space-y-4">
+                        <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                          {s.icon} {s.title}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed">
+                          {s.details}
+                        </p>
 
-                    {/* Category Section */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-800 mb-3">
-                        Select a Category
-                      </h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {categories.map((cat) => (
-                          <button
-                            key={cat}
-                            className="px-4 py-3 text-sm font-medium border border-gray-300 rounded-xl shadow-sm bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 transition"
-                          >
-                            {cat}
-                          </button>
-                        ))}
+                        {/* Category Section */}
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-800 mb-3">
+                            Select a Category
+                          </h4>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {categories.map((cat) => (
+                              <button
+                                key={cat}
+                                onClick={() => handleCategoryClick(cat)}
+                                className="px-4 py-3 text-sm font-medium border border-gray-300 rounded-xl shadow-sm bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 transition"
+                              >
+                                {cat}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
+                    ))}
+                </>
+              ) : (
+                <>
+                  {/* Stepper Navigation */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex gap-2">
+                      <span
+                        className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+                          step === 1
+                            ? "bg-yellow-400 text-gray-900"
+                            : "bg-gray-300 text-gray-700"
+                        }`}
+                      >
+                        1
+                      </span>
+                      <span
+                        className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+                          step === 2
+                            ? "bg-yellow-400 text-gray-900"
+                            : "bg-gray-300 text-gray-700"
+                        }`}
+                      >
+                        2
+                      </span>
                     </div>
+                    <span className="text-sm text-gray-500">
+                      {selectedCategory} Project
+                    </span>
                   </div>
-                ))}
+
+                  {/* Stepper Content */}
+                {step === 1 && (
+                  <ProjectOverview
+                    service={services.find((s) => s.key === activeModal)}
+                    categories={categories}
+                  />
+                )}
+                  {step === 2 && <ClientInfo />}
+
+                  {/* Navigation Buttons */}
+                  <div className="flex justify-between mt-6">
+                    {step > 1 && (
+                      <button
+                        onClick={() => setStep(step - 1)}
+                        className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                      >
+                        Back
+                      </button>
+                    )}
+                    {step < 2 ? (
+                      <button
+                        onClick={() => setStep(step + 1)}
+                        className="ml-auto px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500"
+                      >
+                        Next
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => alert("Form submitted!")}
+                        className="ml-auto px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                      >
+                        Submit
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
-
 
       {/* CTA Section */}
       <div className="bg-yellow-400 text-gray-900 py-12 text-center">
