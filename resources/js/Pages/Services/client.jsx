@@ -218,6 +218,8 @@ export default function Services() {
                   <ProjectOverview
                     service={services.find((s) => s.key === activeModal)}
                     categories={categories}
+                    selectedCategory={selectedCategory}
+                    onCategorySelect={setSelectedCategory}
                   />
                 )}
                   {step === 2 && <ClientInfo />}
