@@ -9,6 +9,7 @@ import {
 
 import ProjectOverview from "./ProjectOverview";
 import ClientInfo from "./ClientInfo";
+import Appointment from "./Appointment";
 
 export default function Services() {
   const [activeModal, setActiveModal] = useState(null); // track which modal is open
@@ -207,6 +208,13 @@ export default function Services() {
                       >
                         2
                       </span>
+                       <span
+                          className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+                            step === 3 ? "bg-yellow-400 text-gray-900" : "bg-gray-300 text-gray-700"
+                          }`}
+                        >
+                          3
+                        </span>
                     </div>
                     <span className="text-sm text-gray-500">
                       {selectedCategory} Project
@@ -223,6 +231,7 @@ export default function Services() {
                   />
                 )}
                   {step === 2 && <ClientInfo />}
+                  {step === 3 && <Appointment />}
 
                   {/* Navigation Buttons */}
                   <div className="flex justify-between mt-6">
@@ -234,7 +243,7 @@ export default function Services() {
                         Back
                       </button>
                     )}
-                    {step < 2 ? (
+                    {step < 3 ? (
                       <button
                         onClick={() => setStep(step + 1)}
                         className="ml-auto px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500"
@@ -249,6 +258,7 @@ export default function Services() {
                         Submit
                       </button>
                     )}
+
                   </div>
                 </>
               )}
@@ -265,9 +275,9 @@ export default function Services() {
         <p className="mt-3 text-lg opacity-90">
           Schedule a consultation today and bring your ideas to life.
         </p>
-        <button className="mt-6 bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+        {/* <button className="mt-6 bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
           Get Started
-        </button>
+        </button> */}
       </div>
     </AuthenticatedLayout>
   );
