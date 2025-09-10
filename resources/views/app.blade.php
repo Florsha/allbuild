@@ -9,6 +9,15 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+         <style>
+            .gradient {
+                /* background: linear-gradient(90deg, #7f8d6c 0%, #6c7f8d 100%); */
+                /* background: linear-gradient(90deg, #d4a373 0%, #6c7f8d 100%); */
+                
+                background: linear-gradient(90deg, #4f709c 0%, #88a4d4 100%);
+
+            }
+         </style>
 
         <!-- Scripts -->
         @routes
