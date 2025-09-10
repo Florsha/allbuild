@@ -10,6 +10,7 @@ import {
 import ProjectOverview from "./ProjectOverview";
 import ClientInfo from "./ClientInfo";
 import Appointment from "./Appointment";
+import Location from "./Location";
 
 export default function Services() {
   const [activeModal, setActiveModal] = useState(null); // track which modal is open
@@ -215,6 +216,13 @@ export default function Services() {
                         >
                           3
                         </span>
+                         <span
+                          className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+                            step === 4 ? "bg-yellow-400 text-gray-900" : "bg-gray-300 text-gray-700"
+                          }`}
+                        >
+                          4
+                        </span>
                     </div>
                     <span className="text-sm text-gray-500">
                       {selectedCategory} Project
@@ -232,6 +240,7 @@ export default function Services() {
                 )}
                   {step === 2 && <ClientInfo />}
                   {step === 3 && <Appointment />}
+                  {step === 4 && <Location />}
 
                   {/* Navigation Buttons */}
                   <div className="flex justify-between mt-6">
@@ -243,7 +252,7 @@ export default function Services() {
                         Back
                       </button>
                     )}
-                    {step < 3 ? (
+                    {step < 4 ? (
                       <button
                         onClick={() => setStep(step + 1)}
                         className="ml-auto px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500"
