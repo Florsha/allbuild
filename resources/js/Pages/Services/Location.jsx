@@ -22,8 +22,8 @@ export default function Location() {
   const [address, setAddress] = useState("");
 
   // 🗝️ Two keys
-  const mapsApiKey = "AIzaSyDTljhqC_lOtAprS9xGOhSj8RBHQ4UGIPc"; // Maps + Places
-  const geocodeApiKey = "AIzaSyBOPskDwb9LxExHOXaKSX2m9dlI3u82W6E"; // optional fallback
+  const mapsApiKey = import.meta.env.VITE_MAPS_API_KEY; // Maps + Places
+  const geocodeApiKey = import.meta.env.VITE_GEOCODE_API_KEY; // optional fallback
 
   const autocompleteRef = useRef(null);
 
