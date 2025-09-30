@@ -95,19 +95,19 @@ export default function Appointment() {
         </div>
 
         <div className="flex items-center justify-center mt-8">
-          <img
+          {/* <img
             src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
             alt="Illustration"
             className="w-40 opacity-70"
-          />
+          /> */}
         </div>
 
-        <button
+        {/* <button
           onClick={() => alert("Appointment booked!")}
           className="w-full bg-yellow-400 text-gray-900 font-semibold py-3 rounded-lg hover:bg-yellow-500 transition mt-6"
         >
           Book Appointment
-        </button>
+        </button> */}
       </div>
     </div>
   );

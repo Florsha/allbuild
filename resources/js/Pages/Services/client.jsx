@@ -5,6 +5,7 @@ import {
   WrenchScrewdriverIcon,
   BuildingOffice2Icon,
   HomeModernIcon,
+  PuzzlePieceIcon,
 } from "@heroicons/react/24/outline";
 
 import ProjectOverview from "./ProjectOverview";
@@ -51,6 +52,17 @@ export default function Services() {
       details:
         "Quick, reliable repairs and ongoing maintenance to keep your property in top shape.",
     },
+    {
+      key: "services",
+      title: "Other Services",
+      description:
+        "Specialized solutions tailored to your unique needs, including design, landscaping, and custom projects.",
+      icon: <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+      image:
+        "https://images.unsplash.com/photo-1600585154084-4e5fe7c1c7e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      details:
+        "Our other services include interior design consultation, landscaping, painting, electrical work, plumbing, and customized construction requests. Perfect for clients looking for tailored solutions to complete their project."
+    }
   ];
 
   const categories = [
@@ -74,7 +86,7 @@ export default function Services() {
       {/* Hero Section */}
       <div className="relative bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1581090700227-4c4c15f9b4ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"></div>
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold">
             Professional Construction Services
           </h1>
@@ -92,7 +104,7 @@ export default function Services() {
             Choose Your Service
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {services.map((service) => (
               <div
                 key={service.key}
@@ -277,7 +289,7 @@ export default function Services() {
       )}
 
       {/* CTA Section */}
-      <div className="bg-yellow-400 text-gray-900 py-12 text-center">
+      <div className="bg-yellow-400 text-gray-900 py-8 text-center">
         <h3 className="text-2xl md:text-3xl font-bold">
           Let’s Build Something Great Together
         </h3>
