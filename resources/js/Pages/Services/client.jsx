@@ -86,7 +86,7 @@ export default function Services() {
       {/* Hero Section */}
       <div className="relative bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1581090700227-4c4c15f9b4ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"></div>
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-8 text-center">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-5 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold">
             Professional Construction Services
           </h1>
