@@ -11,15 +11,34 @@ export default function Register() {
         firstname: '',
         middlename: '',
         lastname: '',
-        
         email: '',
         password: '',
         password_confirmation: '',
+        contact_number: '',
+        address: '',
+        preferred_contact_method: '',
+        company_or_organization: '',
+        role: '',
+        terms_and_condition_concent: false,
     });
 
     const submit = (e) => {
         e.preventDefault();
         post(route('register'), {
+            onSuccess: (page) => {
+                if (window.Lobibox) {
+                    window.Lobibox.notify('info', {
+                        msg: 'Registration successful! Redirecting to dashboard...',
+                        position: 'top right',
+                        sound: false,
+                    });
+                } else {
+                    alert('Registration successful! Redirecting to dashboard...');
+                }
+                setTimeout(() => {
+                    window.location.href = route('dashboard');
+                }, 1500);
+            },
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -129,7 +148,86 @@ export default function Register() {
                     />
                 </div>
 
-                {/* Buttons */}
+                {/* Contact Number */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="contact_number" value="Contact Number" />
+                    <TextInput
+                        id="contact_number"
+                        name="contact_number"
+                        value={data.contact_number}
+                        className="mt-1 block w-full"
+                        autoComplete="tel"
+                        onChange={(e) => setData('contact_number', e.target.value)}
+                    />
+                    <InputError message={errors.contact_number} className="mt-2" />
+                </div>
+
+                {/* Address */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="address" value="Address" />
+                    <TextInput
+                        id="address"
+                        name="address"
+                        value={data.address}
+                        className="mt-1 block w-full"
+                        autoComplete="street-address"
+                        onChange={(e) => setData('address', e.target.value)}
+                    />
+                    <InputError message={errors.address} className="mt-2" />
+                </div>
+
+                {/* Preferred Contact Method */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="preferred_contact_method" value="Preferred Contact Method" />
+                    <TextInput
+                        id="preferred_contact_method"
+                        name="preferred_contact_method"
+                        value={data.preferred_contact_method}
+                        className="mt-1 block w-full"
+                        onChange={(e) => setData('preferred_contact_method', e.target.value)}
+                    />
+                    <InputError message={errors.preferred_contact_method} className="mt-2" />
+                </div>
+
+                {/* Company or Organization */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="company_or_organization" value="Company or Organization" />
+                    <TextInput
+                        id="company_or_organization"
+                        name="company_or_organization"
+                        value={data.company_or_organization}
+                        className="mt-1 block w-full"
+                        onChange={(e) => setData('company_or_organization', e.target.value)}
+                    />
+                    <InputError message={errors.company_or_organization} className="mt-2" />
+                </div>
+
+                {/* Role */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="role" value="Role" />
+                    <TextInput
+                        id="role"
+                        name="role"
+                        value={data.role}
+                        className="mt-1 block w-full"
+                        onChange={(e) => setData('role', e.target.value)}
+                    />
+                    <InputError message={errors.role} className="mt-2" />
+                </div>
+
+                {/* Terms and Condition Consent */}
+                <div className="mt-4 flex items-center">
+                    <input
+                        id="terms_and_condition_concent"
+                        name="terms_and_condition_concent"
+                        type="checkbox"
+                        checked={data.terms_and_condition_concent}
+                        onChange={(e) => setData('terms_and_condition_concent', e.target.checked)}
+                        className="mr-2"
+                        required
+                    />
+                    <InputLabel htmlFor="terms_and_condition_concent" value="I agree to the Terms and Conditions" />
+                </div>
                 <div className="flex items-center justify-end mt-4">
                     <Link
                         href={route('login')}

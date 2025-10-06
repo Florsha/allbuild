@@ -61,6 +61,14 @@ export default function AuthenticatedLayout({ header, children }) {
                             >
                                 <UserCircleIcon className="h-5 w-5 mr-1" /> Profile
                             </Link>
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="ml-2 flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700 hover:bg-gray-300 transition"
+                            >
+                                Log Out
+                            </Link>
                         </div>
 
                         {/* Mobile Hamburger */}
