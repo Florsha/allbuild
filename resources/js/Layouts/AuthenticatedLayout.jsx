@@ -182,6 +182,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-2" />
                                 Logout
                             </Link>
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="ml-2 flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700 hover:bg-gray-300 transition"
+                            >
+                                Log Out
+                            </Link>
                         </div>
                     </aside>
 
