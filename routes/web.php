@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\Admin\DashboardCtrl;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/contractor', [ContractorController::class, 'index'])->name('contractor');
     Route::get('/services', [ClientController::class, 'client'])->name('services');
+
+    Route::get('admin/categoryList', [DashboardCtrl::class, 'categoryList'])->name('categoryList');
+
+    Route::get('/admin/dashboard', [DashboardCtrl::class, 'dashboard'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';
