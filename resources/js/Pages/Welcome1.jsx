@@ -1,587 +1,228 @@
-import React, { useEffect } from "react";
+import React from 'react';
 import { Link } from '@inertiajs/react';
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
-    const resources = [
-        {
-            category: "MISSION",
-            title: "",
-            description: "To connect clients with trusted contractors quickly and securely.",
-            buttonText: "Read More",
-            link: "#"
-        },
-        {
-            category: "VISION",
-            title: "",
-            description: "To become the leading global platform where every client finds the right contractor with confidence.",
-            buttonText: "Explore",
-            link: "#"
-        },
-        {
-            category: "GOALS",
-            title: " ",
-            description: "To provide a comprehensive platform that simplifies the contractor selection process, ensuring quality and reliability.",
-            buttonText: "Learn More",
-            link: "#"
-        }
-    ];
+import { motion } from 'framer-motion';
+import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User } from 'lucide-react';
 
-    useEffect(() => {
-        // Get references to DOM elements
-        var header = document.getElementById("header");
-        var navcontent = document.getElementById("nav-content");
-        var navaction = document.getElementById("navAction");
-        var navtoggle = document.getElementById("nav-toggle");
-        var toToggle = document.querySelectorAll(".toggleColour");
+export default function Landing() {
+  const contributors = [
+    {
+      name: "Jane Doe",
+      role: "Project Manager",
+      testimonial:
+        "All Build Corp made managing multiple contractors so easy. Communication and transparency were top-notch!",
+      rating: 5,
+    },
+    {
+      name: "John Smith",
+      role: "Lead Engineer",
+      testimonial:
+        "The verification process and project workflow are seamless. A great experience overall.",
+      rating: 4,
+    },
+    {
+      name: "Maria Lopez",
+      role: "Architect",
+      testimonial:
+        "I love how this platform builds trust between clients and professionals. Highly recommended!",
+      rating: 5,
+    },
+  ];
 
-        // Handler for scroll events
-        function handleScroll() {
-            /*Apply classes for slide in bar*/
-            var scrollpos = window.scrollY;
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white text-gray-800 overflow-hidden">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-8 py-4 bg-white/70 backdrop-blur-md shadow-sm z-50">
+        <div className="text-2xl font-extrabold text-yellow-600 tracking-tight">All Build Corp</div>
+        <div className="hidden md:flex space-x-8 font-medium">
+          <Link href="#features" className="hover:text-yellow-600 transition-colors">Features</Link>
+          <Link href="#about" className="hover:text-yellow-600 transition-colors">About</Link>
+          <Link href="#services" className="hover:text-yellow-600 transition-colors">Services</Link>
+          <Link href="#testimonials" className="hover:text-yellow-600 transition-colors">Testimonials</Link>
+          <Link href="#contact" className="hover:text-yellow-600 transition-colors">Contact</Link>
+        </div>
+        <Link
+          href="/login"
+          className="bg-yellow-500 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition font-semibold shadow"
+        >
+          Get Started
+        </Link>
+      </nav>
 
-            if (scrollpos > 10) {
-                header.classList.add("bg-white");
-                navaction.classList.remove("bg-white");
-                navaction.classList.add("gradient");
-                navaction.classList.remove("text-gray-800");
-                navaction.classList.add("text-white");
-                //Use to switch toggleColour colours
-                for (var i = 0; i < toToggle.length; i++) {
-                    toToggle[i].classList.add("text-gray-800");
-                    toToggle[i].classList.remove("text-white");
-                }
-                header.classList.add("shadow");
-                navcontent.classList.remove("bg-gray-100");
-                navcontent.classList.add("bg-white");
-            } else {
-                header.classList.remove("bg-white");
-                navaction.classList.remove("gradient");
-                navaction.classList.add("bg-white");
-                navaction.classList.remove("text-white");
-                navaction.classList.add("text-gray-800");
-                //Use to switch toggleColour colours
-                for (var i = 0; i < toToggle.length; i++) {
-                    toToggle[i].classList.add("text-white");
-                    toToggle[i].classList.remove("text-gray-800");
-                }
-
-                header.classList.remove("shadow");
-                navcontent.classList.remove("bg-white");
-                navcontent.classList.add("bg-gray-100");
-            }
-        }
-
-        // Function to check if clicked element is a parent
-        function checkParent(t, elm) {
-            while (t.parentNode) {
-                if (t == elm) {
-                    return true;
-                }
-                t = t.parentNode;
-            }
-            return false;
-        }
-
-        // Handler for document clicks (for nav menu)
-        function handleDocumentClick(e) {
-            var target = (e && e.target) || (event && event.srcElement);
-            var navMenuDiv = document.getElementById("nav-content");
-            var navMenu = document.getElementById("nav-toggle");
-
-            //Nav Menu
-            if (!checkParent(target, navMenuDiv)) {
-                // click NOT on the menu
-                if (checkParent(target, navMenu)) {
-                    // click on the link
-                    if (navMenuDiv.classList.contains("hidden")) {
-                        navMenuDiv.classList.remove("hidden");
-                    } else {
-                        navMenuDiv.classList.add("hidden");
-                    }
-                } else {
-                    // click both outside link and outside menu, hide menu
-                    navMenuDiv.classList.add("hidden");
-                }
-            }
-        }
-
-        // Add event listeners
-        document.addEventListener("scroll", handleScroll);
-        document.addEventListener("click", handleDocumentClick);
-
-        // Initial call to set initial state
-        handleScroll();
-
-        // function handleNavToggle(e) {
-        //     e.preventDefault();
-        //     if (navContent) {
-        //       navContent.classList.toggle("hidden");
-        //     }
-        // }
-
-        // if (navtoggle) {
-        //     navtoggle.addEventListener("click", handleNavToggle);
-        // }
-
-        // Cleanup function to remove event listeners when component unmounts
-        return () => {
-            document.removeEventListener("scroll", handleScroll);
-            document.removeEventListener("click", handleDocumentClick);
-            // if (navtoggle) {
-            //     navtoggle.removeEventListener("click", handleNavToggle);
-            // }
-        };
-    }, []);
-    return (
-        <>
-            <nav id="header" className="fixed w-full z-30 top-0 text-white"
-            // style={{ backgroundColor: "#556b8e"}} 
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center text-center px-6 py-32 bg-[url('/handshake.png')] bg-cover bg-center relative">
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 max-w-3xl text-white">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="text-5xl md:text-7xl font-extrabold mb-6"
+          >
+            Building Trust, One Project at a Time
+          </motion.h1>
+          <p className="text-xl md:text-2xl mb-10 text-gray-200">
+            Connecting clients and contractors with confidence and transparency.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/register"
+              className="bg-yellow-500 text-gray-900 px-8 py-4 rounded-full font-bold text-lg shadow hover:bg-yellow-400 transition flex items-center justify-center"
             >
-                <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
-                    <div className="pl-4 flex items-center">
-                        <img
-                            src="/sampleLogo.png"
-                            alt="Logo"
-                            style={{ width: "50px", marginRight: "15px" }}
-                        />
-                        {/* <a
-                        className="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-                        href="#"
-                    >
-                        Chronic Kidney Disease
-                    </a> */}
-                        <a
-                            className="toggleColour text-white font-bold text-xl sm:text-2xl lg:text-4xl transition duration-300 ease-in-out hover:text-gray-300 hover:underline lg:hover:no-underline"
-                            href="#"
-                        >
-                            All Build Corp <span className="hidden sm:inline"></span>
-                        </a>
-                    </div>
-                    <div className="block lg:hidden pr-4">
-                        <button
-                            id="nav-toggle"
-                            className="flex items-center p-1 text-pink-800 hover:text-gray-900 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                        >
-                            <svg
-                                className="fill-current h-6 w-6"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <title>Menu</title>
-                                <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className="w-full flex-grow lg:flex lg:items-center lg:w-auto hidden mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0 z-20" id="nav-content">
-                        <ul className="list-reset lg:flex justify-end flex-1 items-center">
-                            <li className="mr-3">
-                                <a className="inline-block py-2 px-4 text-black font-bold no-underline" href="#">
-                                    Home
-                                </a>
-                            </li>
-                            {/* <li className="mr-3">
-                        <a
-                            className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-                            href="#about"
-                        >
-                            About CKD
-                        </a>
-                        </li> */}
-                            <li className="mr-3">
-                                <a
-                                    className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-                                    href="#resources"
-                                >
-                                    Resources
-                                </a>
-                            </li>
-                        </ul>
-                        <button
-                            id="navAction"
-                            className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full mt-4 lg:mt-0 py-4 px-8 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                        >
-                            Get Help
-                        </button>
-                    </div>
-                </div>
-                <hr className="border-b border-gray-100 opacity-25 my-0 py-0" />
-            </nav>
-
-            {/* <div className="pt-24">
-                <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-                    <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
-                        <p className="uppercase tracking-loose w-full">Patient Information System</p>
-                        <h1 className="my-4 text-5xl font-bold leading-tight">
-                            Efficient CKD Patient Management
-                        </h1>
-                        <p className="leading-normal text-2xl mb-8">
-                            Securely encode and manage patient records for Chronic Kidney Disease. Streamline data entry and improve patient care.
-                        </p>
-                        <Link href={route('login')} className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                            Get Started
-                        </Link>
-                    </div>
-                    <div className="w-full md:w-3/5 py-6 text-center">
-                        <img className="md:ml-60 md:w-30 z-50" src="https://cdn-icons-png.flaticon.com/512/954/954394.png" />
-                    </div>
-                </div>
-            </div>  */}
-
-            {/* <div className="relative z-10 pt-28 pb-12 md:pt-44 md:pb-0"
-                style={{ backgroundColor: "#f5f5f5" }}>
-                <div className="container px-6 mx-auto flex flex-col-reverse md:flex-row items-center gap-8"> */}
-            {/* Left Content */}
-            {/* <div className="flex flex-col w-full md:w-2/5 justify-center items-center md:items-start text-center md:text-left">
-                        <h1 className="my-4 text-4xl md:text-5xl font-bold leading-tight">
-                        All Build Corp 
-                        </h1>
-                        <p className="leading-relaxed text-lg md:text-2xl mb-6 ">
-                            Securely find the right contractor for your needs.
-                        </p>
-                        <Link 
-                            href={route('login')} 
-                            className="gradient mx-auto md:mx-0 bg-white text-gray-800 font-bold rounded-full py-3 px-6 shadow-lg hover:scale-105 transition-transform duration-300"
-                        >
-                            Get Started
-                        </Link>
-                    </div> */}
-
-            {/* Right Image */}
-            {/* <div className="w-full md:w-3/5 flex justify-center md:justify-end">
-                        <img 
-                            className="w-48 md:w-64 lg:w-72"
-                            // src="https://cdn-icons-png.flaticon.com/512/954/954394.png"
-                            alt="Patient System"
-                        />
-                    </div>
-                </div>
-            </div> */}
-            <div
-                className="relative z-10 h-screen flex items-center"
-                style={{ backgroundImage: "url('/handshake.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+              Join Now <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+            <Link
+              href="#about"
+              className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-gray-900 transition"
             >
-                {/* Overlay for readability */}
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+              Learn More
+            </Link>
+          </div>
+        </div>
+      </section>
 
-                {/* Content */}
-                <div className="relative container px-6 mx-auto flex flex-col md:flex-row items-center gap-8 z-10">
+      {/* Features Section */}
+      <section id="features" className="px-6 py-24 bg-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-10 text-gray-900">
+            Why Choose <span className="text-yellow-600">All Build Corp</span>?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              { icon: <Zap className="w-10 h-10 text-yellow-600" />, title: 'Fast & Reliable', desc: 'We connect you quickly with trusted contractors.' },
+              { icon: <Shield className="w-10 h-10 text-yellow-600" />, title: 'Secure Platform', desc: 'Your safety and data are our top priorities.' },
+              { icon: <Users className="w-10 h-10 text-yellow-600" />, title: 'Verified Contractors', desc: 'Work only with pre-screened professionals.' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.2 }}
+                className="p-10 bg-gradient-to-br from-yellow-50 to-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="flex justify-center mb-6">{item.icon}</div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                    {/* Left Content */}
-                    <div className="flex flex-col w-full md:w-2/5 justify-center items-center md:items-start text-center md:text-left text-white">
-                        <h1 className="my-4 text-4xl md:text-5xl font-bold leading-tight">
-                            All Build Corp
-                        </h1>
-                        <p className="italic text-lg md:text-xl text-gray-700 mb-2">
-                            All Build Corp — Building trust, one project at a time
-                        </p>
-                        <p className="leading-relaxed text-lg md:text-2xl mb-6">
-                            Securely find the right contractor for your needs.
-                        </p>
-                        <Link
-                            href={route('login')}
-                            className="gradient mx-auto md:mx-0 text-white font-bold rounded-full py-3 px-6 shadow-lg hover:scale-105 transition-transform duration-300"
-                        >
-                            Get Started
-                        </Link>
-                    </div>
+      {/* About Section */}
+      <section id="about" className="relative py-24 bg-gradient-to-br from-gray-50 to-yellow-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8">About Us</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            At All Build Corp, our mission is to connect clients with trusted contractors quickly and securely, ensuring quality and confidence in every project.
+          </p>
+          <div className="mt-10 grid sm:grid-cols-3 gap-8">
+            {[
+              { label: 'Mission', desc: 'To provide a seamless client-contractor connection.', icon: '🎯' },
+              { label: 'Vision', desc: 'To be the most trusted construction platform worldwide.', icon: '🔭' },
+              { label: 'Goal', desc: 'Simplify selection while ensuring quality & reliability.', icon: '🏆' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white p-8 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="text-2xl font-bold mb-2 text-yellow-600">{item.label}</h3>
+                <p className="text-gray-700">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                    {/* Right Image (Optional: can remove since bg is image) */}
-                    <div className="hidden md:flex w-full md:w-3/5 justify-center md:justify-end">
-                        <img
-                            className="w-48 md:w-64 lg:w-72"
-                        // src="/path-to-your-icon.png"
-                        // alt="Contractor Icon"
-                        />
-                    </div>
+      {/* Services Section */}
+      <section id="services" className="px-6 py-24 bg-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">Our Services</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[
+              { title: 'Consultation', desc: 'Get expert advice on project planning and management.', icon: '💬' },
+              { title: 'Project Management', desc: 'Comprehensive oversight from start to finish.', icon: '📋' },
+              { title: 'Construction', desc: 'Access verified contractors for all types of builds.', icon: '🏗️' },
+              { title: 'Quality Assurance', desc: 'Ensuring top-quality results every time.', icon: '⭐' },
+              { title: 'Support', desc: 'Dedicated team to help you along the way.', icon: '🤝' },
+              { title: 'Innovation', desc: 'Modern solutions for every project need.', icon: '⚙️' },
+            ].map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="p-8 bg-gradient-to-br from-gray-50 to-yellow-50 rounded-3xl shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="text-5xl mb-4">{s.icon}</div>
+                <h3 className="text-2xl font-semibold mb-2 text-gray-900">{s.title}</h3>
+                <p className="text-gray-600">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ✅ Testimonials / Top Contributors Section */}
+      <section id="testimonials" className="py-24 bg-gradient-to-br from-yellow-50 to-white">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">
+            What Our <span className="text-yellow-600">Top Contributors</span> Say
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {contributors.map((person, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+                className="bg-white shadow-lg rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="flex justify-center mb-4">
+                  <User className="w-12 h-12 text-yellow-600" />
                 </div>
-            </div>
-
-            {/* <div className="relative -mt-12 lg:-mt-24"
-                style={{ backgroundColor: "#f5f5f5" }}>
-                <svg viewBox="0 0 1428 174" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                        <g transform="translate(-2.000000, 44.000000)" fill="#FFFFFF" fillRule="nonzero">
-                            <path d="M0,0 C90.7283404,0.927527913 147.912752,27.187927 291.910178,59.9119003 C387.908462,81.7278826 543.605069,89.334785 759,82.7326078 C469.336065,156.254352 216.336065,153.6679 0,74.9732496" opacity="0.1"></path>
-                            <path
-                                d="M100,104.708498 C277.413333,72.2345949 426.147877,52.5246657 546.203633,45.5787101 C666.259389,38.6327546 810.524845,41.7979068 979,55.0741668 C931.069965,56.122511 810.303266,74.8455141 616.699903,111.243176 C423.096539,147.640838 250.863238,145.462612 100,104.708498 Z"
-                                opacity="0.1"
-                            ></path>
-                            <path d="M1046,51.6521276 C1130.83045,29.328812 1279.08318,17.607883 1439,40.1656806 L1439,120 C1271.17211,77.9435312 1140.17211,55.1609071 1046,51.6521276 Z" opacity="0.2"></path>
-                        </g>
-                    </g>
-                </svg>
-            </div> */}
-
-            {/* <section className="bg-white border-b py-8" id="about">
-                <div className="container max-w-5xl mx-auto m-8">
-                <h1 className="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
-                    About Chronic Kidney Disease
-                </h1>
-                <div className="w-full mb-4">
-                    <div className="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
+                <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
+                <p className="text-sm text-gray-500 mb-3">{person.role}</p>
+                <p className="text-gray-700 italic mb-4">“{person.testimonial}”</p>
+                <div className="flex justify-center mb-3">
+                  {Array.from({ length: person.rating }).map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  ))}
                 </div>
-                <div className="flex flex-wrap">
-                    <div className="w-5/6 sm:w-1/2 p-6">
-                    <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">
-                        What is Chronic Kidney Disease?
-                    </h3>
-                    <p className="text-gray-600 mb-8">
-                        Chronic Kidney Disease (CKD) is a condition where the kidneys gradually lose function over time. It can lead to serious complications if not managed properly. Early detection and treatment are key to slowing its progression.
-                    </p>
-                    </div>
-                    <div className="w-full sm:w-1/2 p-6">
-                    <img src="https://cdn-icons-png.flaticon.com/512/954/954394.png" className="w-full sm:h-64 mx-auto" alt="Kidney Health" />
-                    </div>
-                </div>
-                <div className="flex flex-wrap flex-col-reverse sm:flex-row">
-                    <div className="w-full sm:w-1/2 p-6 mt-6">
-                    <img src="https://cdn-icons-png.flaticon.com/512/954/954394.png" className="w-5/6 sm:h-64 mx-auto" alt="Kidney Health" />
-                    </div>
-                    <div className="w-full sm:w-1/2 p-6 mt-6">
-                    <div className="align-middle">
-                        <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">
-                        Symptoms of CKD
-                        </h3>
-                        <p className="text-gray-600 mb-8">
-                        Common symptoms include fatigue, swelling in the legs, changes in urination, and high blood pressure. If you experience any of these, consult a healthcare professional immediately.
-                        </p>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </section> */}
+                <motion.div
+                  className="flex justify-center items-center text-yellow-600 font-medium"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <ThumbsUp className="w-4 h-4 mr-1" /> {person.rating * 25} Kudos
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <section className="bg-white border-b py-8" id="resources">
-                <div className="container mx-auto flex flex-wrap pt-4 pb-12">
-                    <h1 className="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
-                        What is All Build Corp?
-                    </h1>
-                    <div className="w-full mb-4">
-                        <div className="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
-                    </div>
-
-                    {resources.map((resource, index) => (
-                        // <div key={index} className="w-full md:w-1/3 p-6 flex flex-col flex-grow flex-shrink">
-                        //     <div className="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
-                        //     <a href={resource.link} className="flex flex-wrap no-underline hover:no-underline">
-                        //         <p className="w-full text-gray-600 text-xs md:text-sm px-6">
-                        //         {resource.category}
-                        //         </p>
-                        //         <div className="w-full font-bold text-xl text-gray-800 px-6">
-                        //         {resource.title}
-                        //         </div>
-                        //         <p className="text-gray-800 text-base px-6 mb-5">
-                        //         {resource.description}
-                        //         </p>
-                        //     </a>
-                        //     </div>
-                        //     <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
-                        //     <div className="flex items-center justify-center">
-                        //         <button className="mx-auto lg:mx-0 hover:underline gradient text-black font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                        //         style={{ border: "2px solid #7f8d6c", borderRadius: "0.5rem" }}>
-                        //         {resource.buttonText}
-                        //         </button>
-                        //     </div>
-                        //     </div>
-                        // </div>
-                        <div key={index} className="w-full md:w-1/3 p-6 flex flex-col flex-grow flex-shrink">
-                            {/* Card container */}
-                            <div className="flex-1 bg-[#f5f5f5] rounded-t rounded-b-none overflow-hidden shadow">
-                                <a href={resource.link} className="flex flex-wrap no-underline hover:no-underline">
-                                    <p className="w-full text-gray-600 text-xs md:text-sm px-6">
-                                        {resource.category}
-                                    </p>
-                                    <div className="w-full font-bold text-xl text-gray-800 px-6">
-                                        {resource.title}
-                                    </div>
-                                    <p className="text-gray-800 text-base px-6 mb-5">
-                                        {resource.description}
-                                    </p>
-                                </a>
-                            </div>
-
-                            {/* Bottom button section */}
-                            <div className="flex-none mt-auto bg-[#7f8d6c] rounded-b rounded-t-none overflow-hidden shadow p-6">
-                                <div className="flex items-center justify-center">
-                                    <button className="mx-auto lg:mx-0 hover:underline">
-                                        {resource.buttonText}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-            {/* Uncomment if you want to add a services section */}<section className="container mx-auto text-center py-6 mb-12">
-  <h1 className="w-full my-2 text-5xl font-bold leading-tight text-center text-black">
-    {/* Building Trust, One Project at a Time */}
-  </h1>
-
-  {/* Combined Grid */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-8">
-    {/* Left Top Card - Clients */}
-    <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300">
-      <h3 className="text-2xl font-semibold mb-4">Clients</h3>
-      <p className="text-gray-600 mb-4">
-        Find skilled contractors for your project. Post your requirements, review profiles, and hire with confidence using All Build Corp.
-      </p>
-      <button className="bg-[#7f8d6c] text-white font-bold rounded-full py-2 px-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-        Join as Client
-      </button>
+      {/* Footer */}
+      <footer id="contact" className="bg-[#1a2332] text-gray-300 py-16">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
+          <div>
+            <h3 className="text-white text-2xl font-bold mb-3">All Build Corp</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Building trust between clients and contractors. Delivering reliability and excellence, every time.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              {['Home', 'About', 'Services', 'Testimonials', 'Contact'].map((item, i) => (
+                <li key={i}><Link href={`#${item.toLowerCase()}`} className="hover:text-yellow-500 transition">{item}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold mb-4">Contact</h4>
+            <p className="text-gray-400">Email: support@allbuildcorp.com</p>
+            <p className="text-gray-400">Phone: +1 234 567 890</p>
+            <p className="text-gray-500 mt-4 text-sm">© {new Date().getFullYear()} All Build Corp. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
-
-    {/* Left Bottom Card - Contractors */}
-    <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300">
-      <h3 className="text-2xl font-semibold mb-4">Contractors</h3>
-      <p className="text-gray-600 mb-4">
-        Connect with clients looking for your expertise. Showcase your skills, build a strong portfolio, and grow your business with All Build Corp.
-      </p>
-      <button className="bg-[#7f8d6c] text-white font-bold rounded-full py-2 px-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-        Join as Contractor
-      </button>
-    </div>
-
-    {/* Right Card spanning both left cards */}
-    <div className="row-span-2 bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300">
-      <h4 className="text-xl font-semibold mb-4">Top Performing Contractor</h4>
-      <p className="text-gray-600 mb-4">
-        Jane consistently delivers high-quality work and is highly rated by clients.
-      </p>
-
-      {/* Ratings */}
-      <div className="mt-4">
-        <p className="text-gray-800 font-bold">★★★★★ 5.0 (40 reviews)</p>
-      </div>
-
-      {/* Testimonials */}
-      <div className="border-t border-gray-200 pt-4 mt-4">
-        <h4 className="text-xl font-semibold mb-2">Testimonial</h4>
-        <p className="text-gray-600 italic">
-          "Working with John was a dream! He exceeded our expectations."
-        </p>
-        <p className="text-gray-600 italic">
-          "Working with John was a dream! He exceeded our expectations."
-        </p>
-        <p className="text-gray-600 italic">
-          "Working with John was a dream! He exceeded our expectations."
-        </p>
-        
-      </div>
-    </div>
-  </div>
-</section>
-
-
-            {/* <section className="py-16 bg-gray-50">
-            <div className="container mx-auto px-6">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-                Our Services
-                </h2>
-
-               
-            </div>
-            </section> */}
-
-            {/* <section className="container mx-auto text-center py-6 mb-12">
-                <h1 className="w-full my-2 text-5xl font-bold leading-tight text-center text-black"> */}
-                    {/* Building Trust, One Project at a Time */}
-                {/* </h1> */}
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-8"> */}
-                    {/* For Clients */}
-                    {/* <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <h3 className="text-2xl font-semibold mb-4"> Clients </h3>
-                        <p className="text-gray-600 mb-4">
-                            Find skilled contractor for your project. Post your requirements, review profiles, and hire with confidence using All Build Corp.
-                            </p>
-                        <Link></Link>
-                        <button className="bg-[#7f8d6c] text-white font-bold rounded-full py-2 px-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                            Join as Client
-                            </button>
-
-                    </div> */}
-
-                    {/* For Contractors */}
-                    {/* <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <h3 className="text-2xl font-semibold mb-4"> Contractors </h3>
-                        <p className="text-gray-600 mb-4">
-                            Connect with clients looking for your expertise. Showcase your skills, build a strong portfolio and grow your business with All Build Corp.
-                        </p>
-                        <Link>
-                        </Link>
-                        <button className="bg-[#7f8d6c] text-white font-bold rounded-full py-2 px-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                            Join as Contractor
-                        </button>
-                    </div>
-                </div> */}
-                {/* <div className="w-full mb-4">
-                    <div className="h-1 mx-auto bg-white w-1/6 opacity-25 my-0 py-0 rounded-t"></div>
-                </div> */}
-                {/* <h3 className="my-4 text-3xl leading-tight">
-                   Find the right contractor for your needs with All Build Corp
-                </h3> */}
-                {/* <button
-                    className="mx-auto lg:mx-0 hover:underline text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                    style={{ backgroundColor: "#7f8d6c" }}
-                    >
-                    Get Started
-                </button> */}
-            {/* </section> */}
-
-            <footer className="bg-white">
-                <div className="container mx-auto px-8">
-                    <div className="w-full flex flex-col md:flex-row py-6">
-                        <div className="flex-1 mb-6 text-black">
-                            <a
-                                className="text-black-600 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-                                href="#"
-                            >
-                                All Build Corp
-                            </a>
-                        </div>
-                        <div className="flex-1">
-                            <p className="uppercase text-gray-500 md:mb-6">Quick Links</p>
-                            <ul className="list-reset mb-6">
-                                {[
-                                    { label: "Home", href: "#" },
-                                    { label: "About", href: "#about" },
-                                    { label: "Mission", href: "#testimonials" },
-                                ].map((link, index) => (
-                                    <li key={index} className="mt-2 inline-block mr-2 md:block md:mr-0">
-                                        <a
-                                            href={link.href}
-                                            className="no-underline hover:underline text-gray-800 hover:text-pink-500"
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="flex-1">
-                            <p className="uppercase text-gray-500 md:mb-6">Contact Us</p>
-                            <ul className="list-reset mb-6">
-                                {[
-                                    { label: "Email", href: "#" },
-                                    { label: "Phone", href: "#" },
-                                ].map((contact, index) => (
-                                    <li key={index} className="mt-2 inline-block mr-2 md:block md:mr-0">
-                                        <a
-                                            href={contact.href}
-                                            className="no-underline hover:underline text-gray-800 hover:text-pink-500"
-                                        >
-                                            {contact.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
-            <div>
-                <p className="text-center p-3"
-                    style={{ backgroundColor: "#556b8e" }}>Distributed By: <a href="https://themewagon.com/">DOH CVCHD 7 ICTU</a></p>
-            </div>
-        </>
-    );
+  );
 }

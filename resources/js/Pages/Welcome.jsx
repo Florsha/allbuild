@@ -1,7 +1,32 @@
 import React, { useEffect } from "react";
 import { Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User } from 'lucide-react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
+    const contributors = [
+        {
+            name: "Jane Doe",
+            role: "Project Manager",
+            testimonial:
+                "All Build Corp made managing multiple contractors so easy. Communication and transparency were top-notch!",
+            rating: 5,
+        },
+        {
+            name: "John Smith",
+            role: "Lead Engineer",
+            testimonial:
+                "The verification process and project workflow are seamless. A great experience overall.",
+            rating: 4,
+        },
+        {
+            name: "Maria Lopez",
+            role: "Architect",
+            testimonial:
+                "I love how this platform builds trust between clients and professionals. Highly recommended!",
+            rating: 5,
+        },
+    ];
     const resources = [
         {
             category: "MISSION",
@@ -158,9 +183,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             <li className="mr-3">
                                 <a
                                     className="inline-block text-white hover:text-[#f4c430] transition-colors duration-300 py-2 px-4"
-                                    href="#resources"
+                                    href="#about"
                                 >
-                                    Resources
+                                    About
                                 </a>
                             </li>
                             <li className="mr-3">
@@ -169,6 +194,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     href="#services"
                                 >
                                     Services
+                                </a>
+                            </li>
+                            <li className="mr-3">
+                                <a
+                                    className="inline-block text-white hover:text-[#f4c430] transition-colors duration-300 py-2 px-4"
+                                    href="#testimonials"
+                                >
+                                    Testimonials
                                 </a>
                             </li>
                         </ul>
@@ -234,181 +267,124 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 </div>
             </div>
 
-            {/* Enhanced Resources Section */}
-            <section className="bg-gradient-to-b from-gray-50 to-white py-16" id="resources">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                            What is All Build Corp?
-                        </h2>
-                        <div className="w-24 h-1 bg-[#f4c430] mx-auto rounded-full"></div>
-                        <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-                            Your trusted partner in connecting quality contractors with ambitious projects
-                        </p>
+            {/* Features Section */}
+            <section id="features" className="px-6 py-24 bg-white">
+                <div className="max-w-6xl mx-auto text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold mb-10 text-gray-900">
+                        Why Choose <span className="text-yellow-600">All Build Corp</span>?
+                    </h2>
+                    <div className="grid md:grid-cols-3 gap-10">
+                        {[
+                            { icon: <Zap className="w-10 h-10 text-yellow-600" />, title: 'Fast & Reliable', desc: 'We connect you quickly with trusted contractors.' },
+                            { icon: <Shield className="w-10 h-10 text-yellow-600" />, title: 'Secure Platform', desc: 'Your safety and data are our top priorities.' },
+                            { icon: <Users className="w-10 h-10 text-yellow-600" />, title: 'Verified Contractors', desc: 'Work only with pre-screened professionals.' },
+                        ].map((item, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.2 }}
+                                className="p-10 bg-gradient-to-br from-yellow-50 to-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                            >
+                                <div className="flex justify-center mb-6">{item.icon}</div>
+                                <h3 className="text-2xl font-bold mb-3 text-gray-900">{item.title}</h3>
+                                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                            </motion.div>
+                        ))}
                     </div>
+                </div>
+            </section>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {resources.map((resource, index) => (
-                            <div key={index} className="group">
-                                <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                                    <div className="p-8">
-                                        <div className="text-5xl mb-4">{resource.icon}</div>
-                                        <p className="text-[#f4c430] font-bold text-sm uppercase tracking-wider mb-2">
-                                            {resource.category}
-                                        </p>
-                                        <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                                            {resource.description}
-                                        </p>
-                                    </div>
-                                    <div className="bg-[#1a2332] px-8 py-6 transition-colors duration-300 group-hover:bg-[#f4c430]">
-                                        <button className="w-full text-white font-semibold group-hover:text-gray-900 transition-colors duration-300 flex items-center justify-center">
-                                            {resource.buttonText}
-                                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+            {/* About Section */}
+            <section id="about" className="relative py-24 bg-gradient-to-br from-gray-50 to-yellow-50">
+                <div className="max-w-6xl mx-auto px-6 text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8">About Us</h2>
+                    <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        At All Build Corp, our mission is to connect clients with trusted contractors quickly and securely, ensuring quality and confidence in every project.
+                    </p>
+                    <div className="mt-10 grid sm:grid-cols-3 gap-8">
+                        {[
+                            { label: 'Mission', desc: 'To provide a seamless client-contractor connection.', icon: '🎯' },
+                            { label: 'Vision', desc: 'To be the most trusted construction platform worldwide.', icon: '🔭' },
+                            { label: 'Goal', desc: 'Simplify selection while ensuring quality & reliability.', icon: '🏆' },
+                        ].map((item, i) => (
+                            <div key={i} className="bg-white p-8 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                                <div className="text-5xl mb-4">{item.icon}</div>
+                                <h3 className="text-2xl font-bold mb-2 text-yellow-600">{item.label}</h3>
+                                <p className="text-gray-700">{item.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
-            {/* Join Platform Section */}
-            <section className="bg-white py-16" id="services">
-                <div className="container mx-auto px-6">
-                    {/* Section Header */}
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                            Join Our Platform
-                        </h2>
-                        <div className="w-24 h-1 bg-[#f4c430] mx-auto rounded-full"></div>
-                    </div>
 
-                    {/* Cards */}
-                    <div className="flex flex-col md:flex-row justify-center items-stretch gap-8">
-
-                        {/* Clients Card */}
-                        <div className="flex-1 max-w-md bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                            <div className="text-5xl mb-6 text-center">👥</div>
-                            <h3 className="text-2xl font-bold mb-4 text-gray-900 text-center">Clients</h3>
-                            <p className="text-gray-600 mb-6 leading-relaxed text-center">
-                                Find skilled contractors for your project. Post your requirements, review profiles, and hire with confidence using All Build Corp.
-                            </p>
-                            <ul className="mb-6 space-y-2">
-                                {["Verified contractors", "Secure payments", "24/7 support"].map((item, i) => (
-                                    <li key={i} className="flex items-start">
-                                        <svg className="w-5 h-5 text-[#f4c430] mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span className="text-gray-700">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                            <button className="w-full bg-[#f4c430] text-gray-900 font-bold rounded-full py-3 px-6 shadow-lg hover:shadow-xl hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105">
-                                Join as Client
-                            </button>
-                        </div>
-
-                        {/* Contractors Card */}
-                        <div className="flex-1 max-w-md bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                            <div className="text-5xl mb-6 text-center">🔨</div>
-                            <h3 className="text-2xl font-bold mb-4 text-gray-900 text-center">Contractors</h3>
-                            <p className="text-gray-600 mb-6 leading-relaxed text-center">
-                                Connect with clients looking for your expertise. Showcase your skills, build a strong portfolio, and grow your business with All Build Corp.
-                            </p>
-                            <ul className="mb-6 space-y-2">
-                                {["Quality projects", "Build reputation", "Grow business"].map((item, i) => (
-                                    <li key={i} className="flex items-start">
-                                        <svg className="w-5 h-5 text-[#f4c430] mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span className="text-gray-700">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                            <button className="w-full bg-[#f4c430] text-gray-900 font-bold rounded-full py-3 px-6 shadow-lg hover:shadow-xl hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105">
-                                Join as Contractor
-                            </button>
-                        </div>
-
+            {/* Services Section */}
+            <section id="services" className="px-6 py-24 bg-white">
+                <div className="max-w-6xl mx-auto text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">Our Services</h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {[
+                            { title: 'Consultation', desc: 'Get expert advice on project planning and management.', icon: '💬' },
+                            { title: 'Project Management', desc: 'Comprehensive oversight from start to finish.', icon: '📋' },
+                            { title: 'Construction', desc: 'Access verified contractors for all types of builds.', icon: '🏗️' },
+                            { title: 'Quality Assurance', desc: 'Ensuring top-quality results every time.', icon: '⭐' },
+                            { title: 'Support', desc: 'Dedicated team to help you along the way.', icon: '🤝' },
+                            { title: 'Innovation', desc: 'Modern solutions for every project need.', icon: '⚙️' },
+                        ].map((s, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className="p-8 bg-gradient-to-br from-gray-50 to-yellow-50 rounded-3xl shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
+                            >
+                                <div className="text-5xl mb-4">{s.icon}</div>
+                                <h3 className="text-2xl font-semibold mb-2 text-gray-900">{s.title}</h3>
+                                <p className="text-gray-600">{s.desc}</p>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Join Platform Section - Stacked Side Panel */}
-            <section className="bg-gray-50 py-16" id="services">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-
-                        </h2>
-                        <div className="w-24 h-1 bg-[#f4c430] mx-auto rounded-full"></div>
-                    </div>
-
-                    <div className="flex flex-col lg:flex-row gap-8">
-                        {/* Left side - stacked cards */}
-                        <div className="flex flex-col gap-8 lg:w-1/3 sticky top-32">
-                            <h3 className="text-2xl font-bold mb-4 text-gray-900">Top Contributors</h3>
-
-                            {[
-                                { name: "Jane Doe", role: "Top Contractor", avatar: "JD", rating: 5, reviews: 40, testimonial: "Consistently delivers high-quality work and is highly rated by clients." },
-                                { name: "John Smith", role: "Senior Contractor", avatar: "JS", rating: 4.9, reviews: 35, testimonial: "Professional, reliable, and excellent communication throughout projects." },
-                                { name: "Alice Brown", role: "Expert Contractor", avatar: "AB", rating: 4.8, reviews: 28, testimonial: "Exceptional attention to detail and project management skills." },
-                            ].map((contributor, index) => (
-                                <div key={index} className="bg-[#d3d3d3] p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-[#f4c430] rounded-full flex items-center justify-center text-gray-900 font-bold text-lg">
-                                            {contributor.avatar}
-                                        </div>
-                                        <div className="ml-4">
-                                            <h4 className="text-lg font-bold">{contributor.name}</h4>
-                                            <p className="text-sm text-[#f4c430]">{contributor.role}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 mb-4 text-sm italic">"{contributor.testimonial}"</p>
-                                    <div className="flex items-center text-sm text-gray-700">
-                                        <div className="text-[#f4c430] mr-2">
-                                            {"★".repeat(Math.floor(contributor.rating))}
-                                        </div>
-                                        <span className="font-bold">{contributor.rating.toFixed(1)}</span>
-                                        <span className="ml-2 text-gray-400">({contributor.reviews} reviews)</span>
-                                    </div>
+            {/* ✅ Testimonials / Top Contributors Section */}
+            <section id="testimonials" className="py-24 bg-gradient-to-br from-yellow-50 to-white">
+                <div className="max-w-6xl mx-auto px-6 text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">
+                        What Our <span className="text-yellow-600">Top Contributors</span> Say
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {contributors.map((person, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.2 }}
+                                className="bg-white shadow-lg rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                            >
+                                <div className="flex justify-center mb-4">
+                                    <User className="w-12 h-12 text-yellow-600" />
                                 </div>
-                            ))}
-                        </div>
-
-
-                        {/* Right side - optional extra content */}
-                        <div className="lg:w-2/3 grid grid-cols-2 gap-8">
-                            {[
-                                { title: "Consultation", description: "Get expert advice on your project requirements.", image: "/handshake.png" },
-                                { title: "Project Management", description: "Professional management from start to finish.", image: "/handshake.png" },
-                                { title: "Construction Services", description: "Access verified contractors for your builds.", image: "/handshake.png" },
-                                { title: "Quality Assurance", description: "Ensure every project meets top standards.", image: "/handshake.png" },
-                            ].map((service, index) => (
-                                <div
-                                    key={index}
-                                    className="flex flex-col bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
+                                <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
+                                <p className="text-sm text-gray-500 mb-3">{person.role}</p>
+                                <p className="text-gray-700 italic mb-4">“{person.testimonial}”</p>
+                                <div className="flex justify-center mb-3">
+                                    {Array.from({ length: person.rating }).map((_, i) => (
+                                        <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                                    ))}
+                                </div>
+                                <motion.div
+                                    className="flex justify-center items-center text-yellow-600 font-medium"
+                                    whileHover={{ scale: 1.05 }}
                                 >
-                                    <div className="h-48">
-                                        <img
-                                            src={service.image || '/images/handshake.png'}
-                                            alt={service.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="p-6 flex flex-col justify-center">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                                        <p className="text-gray-600">{service.description}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                    <ThumbsUp className="w-4 h-4 mr-1" /> {person.rating * 25} Kudos
+                                </motion.div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>
-                            
+
             {/* Enhanced Footer */}
             <footer className="bg-[#1a2332] text-white">
                 <div className="container mx-auto px-8 py-12">
