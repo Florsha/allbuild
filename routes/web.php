@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\DashboardCtrl;
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,7 +48,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware('role:1')->group(function () {
-        Route::get('/admin/categoryList', [DashboardCtrl::class, 'categoryList'])->name('categoryList');
+        Route::get('/admin/categoryList', [CategoryController::class, 'index'])->name('categoryList');
+        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
         Route::get('/admin/dashboard', [DashboardCtrl::class, 'dashboard'])->name('dashboard');
     });
     
