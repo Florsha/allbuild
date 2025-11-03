@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 
 export default function Subcateglist({ Subcategories }) {
     const [IsAddListOpen, setIsAddListOpen] = useState(false);
+    const [isEditSubcategOpen, setIsEditSubcategOpen] = useState(false);
     const AddListModal = () => setIsAddListOpen(true);
 
       // Add category form
@@ -38,6 +39,45 @@ export default function Subcateglist({ Subcategories }) {
           },
         });
       };
+
+    // Edit category form
+    const editForm = useForm({
+        id: "",
+        title: "",
+    });
+
+       // ✅ Update category
+        const handleUpdate = (e) => {
+          e.preventDefault();
+          editForm.put(route("categoryList.update", editForm.data.id), {
+            onSuccess: () => {
+              closeEditSubCateg();
+              Swal.fire({
+                icon: "success",
+                title: "Updated!",
+                text: "Category updated successfully.",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+            },
+            onError: () => {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to update category. Please try again.",
+              });
+            },
+          });
+        };
+
+      const openEditSubcateg = (category) => {
+        editForm.setData({
+            id: category.id,
+            title: category.title,
+        });
+        setIsEditSubcategOpen(true);
+    };
+    const closeEditSubCateg = () => setIsEditSubcategOpen(false);
 
     return (
         <AuthenticatedLayout>
@@ -74,7 +114,9 @@ export default function Subcateglist({ Subcategories }) {
                                     {subcateg.title}
                                 </td>
                                 <td className="px-6 py-3 text-center">
-                                    <button className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
+                                    <button 
+                                        onClick={() => openEditSubcateg(subcateg)}
+                                        className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
                                         Edit
                                     </button>
                                     <button className="text-red-600 hover:text-red-800 font-semibold">
@@ -133,6 +175,47 @@ export default function Subcateglist({ Subcategories }) {
                     className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
                     >
                     {addForm.processing ? "Saving..." : "Add"}
+                    </button>
+                </div>
+                </form>
+            </div>
+            )}
+
+            {/* ------------------ EDIT MODAL ------------------ */}
+            {isEditSubcategOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <form
+                onSubmit={handleUpdate}
+                className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6"
+                >
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Edit Category
+                </h2>
+
+                <div className="space-y-3">
+                    <input
+                    type="text"
+                    placeholder="Title"
+                    value={editForm.data.title}
+                    onChange={(e) => editForm.setData("title", e.target.value)}
+                    className="w-full border rounded-lg p-2"
+                    />
+                </div>
+
+                <div className="mt-6 flex justify-end gap-3">
+                    <button
+                    type="button"
+                    onClick={closeEditSubCateg}
+                    className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+                    >
+                    Cancel
+                    </button>
+                    <button
+                    type="submit"
+                    disabled={editForm.processing}
+                    className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+                    >
+                    {editForm.processing ? "Updating..." : "Update"}
                     </button>
                 </div>
                 </form>

@@ -69,4 +69,14 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.subcateg')->with('success', 'Category added successfully!');
     }
+
+    public function updateCategList(Request $request, subcategory $category){
+         $validated = $request->validate([
+            'title' => 'required|string|max:255'
+        ]);
+    
+         $category->update($validated);
+
+        return redirect()->route('admin.subcateg')->with('success', 'Category updated successfully!');
+    }
 }
