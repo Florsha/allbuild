@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\services;
+use App\Models\subcategory;
 
 class CategoryController extends Controller
 {
@@ -55,5 +56,15 @@ class CategoryController extends Controller
     public function subcategory(){
 
         return Inertia::render('Admin/subcategory/subcateglist');
+    }
+
+    public function storeListCateg(Request $request){
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        subcategory::create($validated);
+
+        return redirect()->route('admin.subcateg')->with('success', 'Category added successfully!');
     }
 }
