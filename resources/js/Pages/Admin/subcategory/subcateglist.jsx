@@ -3,8 +3,7 @@ import { Head, useForm, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Swal from 'sweetalert2';
 
-export default function Subcateglist() {
-
+export default function Subcateglist({ Subcategories }) {
     const [IsAddListOpen, setIsAddListOpen] = useState(false);
     const AddListModal = () => setIsAddListOpen(true);
 
@@ -65,9 +64,14 @@ export default function Subcateglist() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            {Subcategories.map((subcateg) =>(
+
+                            <tr
+                                key={subcateg.id}
+                                className="border-t hover:bg-gray-50 transition"
+                            >
                                 <td className="px-6 py-3 font-medium text-gray-800">
-                                    sample
+                                    {subcateg.title}
                                 </td>
                                 <td className="px-6 py-3 text-center">
                                     <button className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
@@ -78,6 +82,18 @@ export default function Subcateglist() {
                                     </button>
                                 </td>
                             </tr>
+                            ))}
+
+                          {Subcategories.length === 0 && (
+                            <tr>
+                                <td
+                                    colSpan="5"
+                                    className="text-center py-6 text-gray-500 italic"
+                                >
+                                    No categories available.
+                                </td>
+                            </tr>
+                        )}
                         </tbody>
                     </table>
                 </div>

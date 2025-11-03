@@ -55,7 +55,9 @@ class CategoryController extends Controller
 
     public function subcategory(){
 
-        return Inertia::render('Admin/subcategory/subcateglist');
+        return Inertia::render('Admin/subcategory/subcateglist', [
+              'Subcategories' => subcategory::select('id','title')->latest()->get(),
+        ]);
     }
 
     public function storeListCateg(Request $request){
