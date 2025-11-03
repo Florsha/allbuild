@@ -52,6 +52,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+        Route::get('admin/subcateg', [CategoryController::class, 'subcategory'])->name('admin.subcateg');
         Route::get('/admin/dashboard', [DashboardCtrl::class, 'dashboard'])->name('dashboard');
     });
     

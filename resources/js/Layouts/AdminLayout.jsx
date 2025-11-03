@@ -24,6 +24,10 @@ export default function AdminLayout({ header, children }) {
           <NavLink href={route('categoryList')} className="flex items-center space-x-2">
             <RectangleGroupIcon className="w-5 h-5" />
             <span>Category</span>
+          </NavLink> <br />
+             <NavLink href={route('admin.subcateg')} className="flex items-center space-x-2">
+            <RectangleGroupIcon className="w-5 h-5" />
+            <span>Sub Category</span>
           </NavLink>
         </nav>
         <div className="p-4 border-t">
@@ -43,7 +47,7 @@ export default function AdminLayout({ header, children }) {
       <div className="flex-1 flex flex-col">
         <header className="flex justify-between items-center bg-white shadow px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-800">
-            {header || 'Admin Dashboard'}
+            {header || 'Category'}
           </h2>
           <div className="flex items-center space-x-3">
             <img

@@ -32,14 +32,14 @@ export default function ClientLayout({ header, children }) {
                 <WrenchScrewdriverIcon className="inline h-5 w-5 mr-1" />
                 Services
               </NavLink>
-              <NavLink href="/projects">
+              {/* <NavLink href="/projects">
                 <ClipboardDocumentListIcon className="inline h-5 w-5 mr-1" />
                 Projects
-              </NavLink>
+              </NavLink> */}
             </div>
 
             <div className="hidden sm:flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">{user?.name}</span>
+              {/* <span className="text-sm font-medium text-gray-700">{user?.name}</span> */}
               <Link
                 href={route('profile.edit')}
                 className="flex items-center rounded-full bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600 transition"
@@ -63,7 +63,7 @@ export default function ClientLayout({ header, children }) {
           <div className="sm:hidden bg-white border-t border-gray-200 shadow-md">
             <div className="space-y-1 p-3">
               <ResponsiveNavLink href="/services">Services</ResponsiveNavLink>
-              <ResponsiveNavLink href="/projects">Projects</ResponsiveNavLink>
+              {/* <ResponsiveNavLink href="/projects">Projects</ResponsiveNavLink> */}
             </div>
           </div>
         )}

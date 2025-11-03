@@ -51,4 +51,9 @@ class CategoryController extends Controller
 
         return redirect()->route('categoryList')->with('success', 'Category deleted successfully!');
     }
+
+    public function subcategory(){
+
+        return Inertia::render('Admin/subcategory/subcateglist');
+    }
 }
