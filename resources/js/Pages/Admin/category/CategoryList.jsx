@@ -8,6 +8,7 @@ export default function CategoryList({ categories }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [editPreview, setEditPreview] = useState(null);
 
   // Add category form
   const addForm = useForm({
@@ -42,6 +43,7 @@ export default function CategoryList({ categories }) {
       image: category.image || "",
       details: category.details || "",
     });
+    setEditPreview(null); // reset new preview
     setIsEditModalOpen(true);
   };
   const closeEditModal = () => setIsEditModalOpen(false);
@@ -51,6 +53,7 @@ export default function CategoryList({ categories }) {
   const handleAdd = (e) => {
     e.preventDefault();
     addForm.post(route("categories.store"), {
+      forceFormData: true,
       onSuccess: () => {
         closeAddModal();
         Swal.fire({
@@ -74,7 +77,16 @@ export default function CategoryList({ categories }) {
   // ✅ Update category
   const handleUpdate = (e) => {
     e.preventDefault();
-    editForm.put(route("categories.update", editForm.data.id), {
+
+    const formData = new FormData();
+    formData.append("title", editForm.data.title);
+    formData.append("description", editForm.data.description);
+    formData.append("details", editForm.data.details);
+    if (editForm.data.image instanceof File) {
+      formData.append("image", editForm.data.image);
+    }
+    router.post(route("categories.update", editForm.data.id), formData, {
+       headers: { "Content-Type": "multipart/form-data" },
       onSuccess: () => {
         closeEditModal();
         Swal.fire({
@@ -168,7 +180,7 @@ export default function CategoryList({ categories }) {
                   <td className="px-6 py-3">
                     {category.image ? (
                       <img
-                        src={category.image}
+                        src={`/storage/${category.image}`}
                         alt={category.title}
                         className="w-20 h-20 rounded-lg object-cover border"
                       />
@@ -224,6 +236,7 @@ export default function CategoryList({ categories }) {
             <form
               onSubmit={handleAdd}
               className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6"
+              encType="multipart/form-data"
             >
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Add New Category
@@ -246,10 +259,9 @@ export default function CategoryList({ categories }) {
                   className="w-full border rounded-lg p-2"
                 />
                 <input
-                  type="text"
-                  placeholder="Image URL"
-                  value={addForm.data.image}
-                  onChange={(e) => addForm.setData("image", e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => addForm.setData("image", e.target.files[0])}
                   className="w-full border rounded-lg p-2"
                 />
                 <textarea
@@ -286,12 +298,16 @@ export default function CategoryList({ categories }) {
             <form
               onSubmit={handleUpdate}
               className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6"
+              encType="multipart/form-data"
             >
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Edit Category
               </h2>
 
               <div className="space-y-3">
+                <label className="block text-gray-700 font-medium mb-1">
+                  Title
+                </label>
                 <input
                   type="text"
                   placeholder="Title"
@@ -299,6 +315,10 @@ export default function CategoryList({ categories }) {
                   onChange={(e) => editForm.setData("title", e.target.value)}
                   className="w-full border rounded-lg p-2"
                 />
+                
+                <label className="block text-gray-700 font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   placeholder="Description"
                   value={editForm.data.description}
@@ -307,13 +327,37 @@ export default function CategoryList({ categories }) {
                   }
                   className="w-full border rounded-lg p-2"
                 />
-                <input
-                  type="text"
-                  placeholder="Image URL"
-                  value={editForm.data.image}
-                  onChange={(e) => editForm.setData("image", e.target.value)}
-                  className="w-full border rounded-lg p-2"
-                />
+                {/* IMAGE PREVIEW */}
+                  {(editPreview || selectedCategory?.image) && (
+                    <div className="mb-3">
+                      <img
+                        src={
+                          editPreview
+                            ? editPreview // show newly selected file
+                            : `/storage/${selectedCategory.image}` // show existing image
+                        }
+                        alt="Preview"
+                        // className="w-32 h-32 object-cover rounded-lg border"
+                        className="w-full max-h-64 object-cover rounded-lg border"
+
+                      />
+                    </div>
+                  )}
+
+                  {/* FILE INPUT */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      editForm.setData("image", file); // store new file
+                      setEditPreview(file ? URL.createObjectURL(file) : null); // preview new file
+                    }}
+                    className="w-full border rounded-lg p-2"
+                  />
+                <label className="block text-gray-700 font-medium mb-1">
+                  Details
+                </label>
                 <textarea
                   placeholder="Details"
                   value={editForm.data.details}

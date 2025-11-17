@@ -147,8 +147,9 @@ export default function Services() {
                 className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white"
               >
                 <div
-                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500"
-                  style={{ backgroundImage: `url(${service.image})` }}
+                  // className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500"
+                    className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500 blur-sm"
+                  style={{ backgroundImage: `url(/storage/${service.image})` }}
                 ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent transition-all"></div>
 

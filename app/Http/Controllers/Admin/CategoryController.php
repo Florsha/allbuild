@@ -23,9 +23,13 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image|max:2048',
             'details' => 'nullable|string',
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('categories', 'public');
+        }
 
         services::create($validated);
 
@@ -37,10 +41,16 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image|max:2048',
             'details' => 'nullable|string',
         ]);
 
+         if ($request->hasFile('image')) {
+            if ($category->image && \Storage::disk('public')->exists($category->image)) {
+                \Storage::disk('public')->delete($category->image);
+            }
+            $validated['image'] = $request->file('image')->store('categories', 'public');
+        }
         $category->update($validated);
 
         return redirect()->route('categoryList')->with('success', 'Category updated successfully!');
