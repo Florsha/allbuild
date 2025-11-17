@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\services; 
+use App\Models\subcategory;
 
 class ClientController extends Controller
 {
@@ -14,7 +15,11 @@ class ClientController extends Controller
     {
 
         $services = services::all();
-           return Inertia::render('Services/client');
+        $subcateg = subcategory::select('id','title')->get();
+           return Inertia::render('Services/client',[
+            "all_services" => $services,
+            "services_offer" => $subcateg
+        ]);
 
     }
 }

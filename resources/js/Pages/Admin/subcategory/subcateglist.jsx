@@ -86,7 +86,7 @@ export default function Subcateglist({ Subcategories }) {
             <div className="p-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-800">Category List</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Sub Category List</h1>
                     <button 
                     onClick={AddListModal}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition">
@@ -119,9 +119,9 @@ export default function Subcateglist({ Subcategories }) {
                                         className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
                                         Edit
                                     </button>
-                                    <button className="text-red-600 hover:text-red-800 font-semibold">
+                                    {/* <button className="text-red-600 hover:text-red-800 font-semibold">
                                         Delete
-                                    </button>
+                                    </button> */}
                                 </td>
                             </tr>
                             ))}

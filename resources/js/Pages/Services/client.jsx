@@ -1,11 +1,13 @@
 import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { usePage,Head } from "@inertiajs/react";
 import {
   WrenchScrewdriverIcon,
   BuildingOffice2Icon,
   HomeModernIcon,
   PuzzlePieceIcon,
+  TruckIcon,
+  BeakerIcon
 } from "@heroicons/react/24/outline";
 
 import ProjectOverview from "./ProjectOverview";
@@ -17,63 +19,97 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const { all_services, services_offer } = usePage().props;
 
-  const services = [
-    {
-      key: "renovation",
-      title: "Renovation",
-      description:
-        "Give your space a fresh new look. From kitchens to offices, we bring modern upgrades to life.",
-      icon: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
-      image:
-        "https://cdn.prod.website-files.com/642c021ff5e1407cd1335eaf/64492986462df701b91ad74d_House%20Renovation%20Feature.jpg",
-      details:
-        "Our renovation service covers small adjustments to major overhauls. Ideal for refreshing spaces while keeping existing structures.",
-    },
-    {
-      key: "construction",
-      title: "New Construction",
-      description:
-        "We manage entire construction projects from foundation to finishing, with quality you can trust.",
-      icon: <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
-      image:
-        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      details:
-        "From planning to completion, our new construction service ensures high standards, durable structures, and modern designs.",
-    },
-    {
-      key: "repair",
-      title: "Repair & Maintenance",
-      description:
-        "Reliable and efficient repair solutions for houses, apartments, and commercial buildings.",
-      icon: <WrenchScrewdriverIcon className="w-12 h-12 text-yellow-400" />,
-      image:
-        "https://www.unitedintoman.com/wp-content/uploads/2022/10/4-1.jpg",
-      details:
-        "Quick, reliable repairs and ongoing maintenance to keep your property in top shape.",
-    },
-    {
-      key: "services",
-      title: "Other Services",
-      description:
-        "Specialized solutions tailored to your unique needs, including design, landscaping, and custom projects.",
-      icon: <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
-      image:
-        "https://images.unsplash.com/photo-1600585154084-4e5fe7c1c7e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      details:
-        "Our other services include interior design consultation, landscaping, painting, electrical work, plumbing, and customized construction requests. Perfect for clients looking for tailored solutions to complete their project.",
-    },
-  ];
+  console.log(services_offer);
+  // const services = [
+  //   {
+  //     key: "renovation",
+  //     title: "Renovation",
+  //     description:
+  //       "Give your space a fresh new look. From kitchens to offices, we bring modern upgrades to life.",
+  //     icon: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
+  //     image:
+  //       "https://cdn.prod.website-files.com/642c021ff5e1407cd1335eaf/64492986462df701b91ad74d_House%20Renovation%20Feature.jpg",
+  //     details:
+  //       "Our renovation service covers small adjustments to major overhauls. Ideal for refreshing spaces while keeping existing structures.",
+  //   },
+  //   {
+  //     key: "construction",
+  //     title: "New Construction",
+  //     description:
+  //       "We manage entire construction projects from foundation to finishing, with quality you can trust.",
+  //     icon: <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
+  //     image:
+  //       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  //     details:
+  //       "From planning to completion, our new construction service ensures high standards, durable structures, and modern designs.",
+  //   },
+  //   {
+  //     key: "repair",
+  //     title: "Repair & Maintenance",
+  //     description:
+  //       "Reliable and efficient repair solutions for houses, apartments, and commercial buildings.",
+  //     icon: <WrenchScrewdriverIcon className="w-12 h-12 text-yellow-400" />,
+  //     image:
+  //       "https://www.unitedintoman.com/wp-content/uploads/2022/10/4-1.jpg",
+  //     details:
+  //       "Quick, reliable repairs and ongoing maintenance to keep your property in top shape.",
+  //   },
+  //   {
+  //     key: "services",
+  //     title: "Other Services",
+  //     description:
+  //       "Specialized solutions tailored to your unique needs, including design, landscaping, and custom projects.",
+  //     icon: <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+  //     image:
+  //       "https://images.unsplash.com/photo-1600585154084-4e5fe7c1c7e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  //     details:
+  //       "Our other services include interior design consultation, landscaping, painting, electrical work, plumbing, and customized construction requests. Perfect for clients looking for tailored solutions to complete their project.",
+  //   },
+  // ];
 
-  const categories = [
-    "Building",
-    "Residential",
-    "Road",
-    "Gate",
-    "WaterLine",
-    "Plumbing",
-  ];
+    // Map service titles to icons (optional)
+  const iconMap = {
+    Renovation: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
+    "New Construction": <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
+    "Repair & Maintenance": <WrenchScrewdriverIcon className="w-12 h-12 text-yellow-400" />,
+    "Other Services": <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+  };
 
+   // Dynamic services from backend
+  const allservices = all_services.map((service) => ({
+    id: service.id,
+    title: service.title,
+    description: service.description,
+    details: service.details,
+    image: service.image ?? "https://via.placeholder.com/400x300?text=No+Image", // fallback image
+    icon: iconMap[service.title] || <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+  }));
+
+  // const categories = [
+  //   "Building",
+  //   "Residential",
+  //   "Road",
+  //   "Gate",
+  //   "WaterLine",
+  //   "Plumbing",
+  // ];
+
+  const categoryIconMap = {
+    Building: <BuildingOffice2Icon className="w-6 h-6 text-yellow-400" />,
+    Residential: <HomeModernIcon className="w-6 h-6 text-yellow-400" />,
+    Road: <TruckIcon className="w-6 h-6 text-yellow-400" />,
+    Gate: <PuzzlePieceIcon className="w-6 h-6 text-yellow-400" />,
+    WaterLine: <BeakerIcon className="w-6 h-6 text-yellow-400" />,
+    Plumbing: <WrenchScrewdriverIcon className="w-6 h-6 text-yellow-400" />,
+  };
+
+  const allcategories = services_offer.map((cat) => ({
+    id: cat.id,
+    title: cat.title,
+    icon: categoryIconMap[cat.title] || <PuzzlePieceIcon className="w-6 h-6 text-yellow-400" />,
+  }));
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat);
     setStep(1);
@@ -105,9 +141,9 @@ export default function Services() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service) => (
+            {allservices.map((service) => (
               <div
-                key={service.key}
+                key={service.id}
                 className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white"
               >
                 <div
@@ -127,7 +163,7 @@ export default function Services() {
                     {service.description}
                   </p>
                   <button
-                    onClick={() => setActiveModal(service.key)}
+                    onClick={() => setActiveModal(service.id)}
                     className="mt-5 bg-yellow-400 text-gray-900 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 shadow-md hover:shadow-lg transition"
                   >
                     Select
@@ -146,7 +182,7 @@ export default function Services() {
             <div className="relative h-56 md:h-72 w-full">
               <img
                 src={
-                  services.find((s) => s.key === activeModal)?.image ||
+                  allcategories.find((s) => s.id === activeModal)?.image ||
                   "https://via.placeholder.com/800"
                 }
                 alt="Service"
@@ -167,10 +203,10 @@ export default function Services() {
             <div className="p-8 md:p-10 space-y-8">
               {!selectedCategory ? (
                 <>
-                  {services
-                    .filter((s) => s.key === activeModal)
+                  {allservices
+                    .filter((s) => s.id === activeModal)
                     .map((s) => (
-                      <div key={s.key} className="space-y-5">
+                      <div key={s.id} className="space-y-5">
                         <h3 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                           {s.icon} {s.title}
                         </h3>
@@ -182,16 +218,21 @@ export default function Services() {
                           <h4 className="text-xl font-semibold text-gray-800 mb-4">
                             Select a Category
                           </h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            {categories.map((cat) => (
-                              <button
-                                key={cat}
-                                onClick={() => handleCategoryClick(cat)}
-                                className="px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 transition duration-200 shadow-sm"
-                              >
-                                {cat}
-                              </button>
-                            ))}
+                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {services_offer && services_offer.length > 0 ? (
+                              services_offer.map((cat) => (
+                                <button
+                                  key={cat.id}
+                                  onClick={() => handleCategoryClick(cat.id)}
+                                  className="px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 transition duration-200 shadow-sm"
+                                >
+                                  {cat.icon}
+                                  {cat.title}
+                                </button>
+                              ))
+                            ) : (
+                              <p className="col-span-full text-gray-500 text-sm">No categories available</p>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -223,8 +264,8 @@ export default function Services() {
                   {/* FORMS */}
                   {step === 1 && (
                     <ProjectOverview
-                      service={services.find((s) => s.key === activeModal)}
-                      categories={categories}
+                      service={allservices.find((s) => s.id === activeModal)}
+                      allcategories={allcategories}
                       selectedCategory={selectedCategory}
                       onCategorySelect={setSelectedCategory}
                     />

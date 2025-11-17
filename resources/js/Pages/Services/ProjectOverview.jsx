@@ -1,6 +1,7 @@
-export default function ProjectOverview({ service, categories = [], selectedCategory, onCategorySelect }) {
+export default function ProjectOverview({ service, allcategories = [], selectedCategory, onCategorySelect }) {
   if (!service) return null; // nothing to show until service is passed
-
+  console.log("allcategories::", allcategories);
+  console.log("selectedCategory::", selectedCategory);
  return (
     <div className="space-y-4">
       <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -14,12 +15,12 @@ export default function ProjectOverview({ service, categories = [], selectedCate
           Select a Category
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {categories.map((cat) => {
-            const isActive = selectedCategory === cat;
+          {allcategories.map((cat) => {
+            const isActive = selectedCategory === cat.id;
             return (
               <button
-                key={cat}
-                onClick={() => onCategorySelect(cat)}
+                key={cat.id}
+                onClick={() => onCategorySelect(cat.id)}
                 className={`px-4 py-3 text-sm font-medium border rounded-xl shadow-sm transition
                   ${
                     isActive
@@ -28,7 +29,8 @@ export default function ProjectOverview({ service, categories = [], selectedCate
                   }
                 `}
               >
-                {cat}
+                {cat.icon}
+                {cat.title}
               </button>
             );
           })}
