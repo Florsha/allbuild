@@ -65,37 +65,36 @@ export default function Appointment() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-slideUp">
               <h2 className="text-2xl font-bold mb-4 text-gray-800">Create Timeslot</h2>
-
-              {/* Start Time Input */}
-              <div className="mb-6">
-                <label className="block text-gray-700 font-medium mb-2">Start Time</label>
-                <input
-                  type="time"
-                  className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
-                />
-                <label className="block text-gray-700 font-medium mb-2">Slot</label>
-                 <input
-                  type="number"
-                  className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
-                />
-              </div>
-
-              {/* Modal Actions */}
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
-                >
-                  Create
-                </button>
-              </div>
-            </div>
+                    {/* Start Time Input */}
+                    <div className="mb-6">
+                        <label className="block text-gray-700 font-medium mb-2">Start Time</label>
+                        <input
+                        type="time"
+                        className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+                        />
+                        <label className="block text-gray-700 font-medium mb-2">Slot</label>
+                        <input
+                        type="number"
+                        min={0}
+                        className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+                        />
+                    </div>
+                    {/* Modal Actions */}
+                    <div className="flex justify-end gap-3">
+                        <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
+                        >
+                        Cancel
+                        </button>
+                        <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
+                        >
+                        Create
+                        </button>
+                    </div>
+                </div>
           </div>
         )}
       </div>
