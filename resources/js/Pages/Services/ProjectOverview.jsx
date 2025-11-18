@@ -17,11 +17,14 @@ export default function ProjectOverview({ service, allcategories = [], selectedC
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {allcategories.map((cat) => {
             const isActive = selectedCategory === cat.id;
+            
             return (
               <button
                 key={cat.id}
                 onClick={() => onCategorySelect(cat.id)}
-                className={`px-4 py-3 text-sm font-medium border rounded-xl shadow-sm transition
+                className={`group px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl 
+                  bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 
+                  transition duration-200 shadow-sm flex items-center justify-center gap-2
                   ${
                     isActive
                       ? "bg-yellow-400 text-white border-yellow-500"
@@ -29,8 +32,9 @@ export default function ProjectOverview({ service, allcategories = [], selectedC
                   }
                 `}
               >
+                
                 {cat.icon}
-                {cat.title}
+                <span>{cat.title}</span>
               </button>
             );
           })}

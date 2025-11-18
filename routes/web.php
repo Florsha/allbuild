@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\DashboardCtrl;
+use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/store/categoryList', [CategoryController::class, 'storeListCateg'])->name('categoryList.store');
         Route::put('/admin/categoryList/{category}', [CategoryController::class, 'updateCategList'])->name('categoryList.update');
         Route::get('/admin/dashboard', [DashboardCtrl::class, 'dashboard'])->name('dashboard');
+
+        //appointment
+        Route::get('admin/appointment', [AdminController::class, 'manageappointment'])->name('manage.appointment');
+
     });
     
 

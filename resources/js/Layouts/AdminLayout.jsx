@@ -4,6 +4,7 @@ import {
   HomeIcon,
   RectangleGroupIcon,
   ArrowLeftOnRectangleIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 
 export default function AdminLayout({ header, children }) {
@@ -25,10 +26,15 @@ export default function AdminLayout({ header, children }) {
             <RectangleGroupIcon className="w-5 h-5" />
             <span>Category</span>
           </NavLink> <br />
-             <NavLink href={route('admin.subcateg')} className="flex items-center space-x-2">
+          <NavLink href={route('admin.subcateg')} className="flex items-center space-x-2">
             <RectangleGroupIcon className="w-5 h-5" />
             <span>Sub Category</span>
+          </NavLink> <br />
+          <NavLink href={route('manage.appointment')} className="flex items-center space-x-2">
+            <CalendarDaysIcon className="w-5 h-5" />
+            <span>Manage Appointment</span>
           </NavLink>
+          <br />
         </nav>
         <div className="p-4 border-t">
           <Link

@@ -97,12 +97,12 @@ export default function Services() {
   // ];
 
   const categoryIconMap = {
-    Building: <BuildingOffice2Icon className="w-6 h-6 text-yellow-400" />,
-    Residential: <HomeModernIcon className="w-6 h-6 text-yellow-400" />,
-    Road: <TruckIcon className="w-6 h-6 text-yellow-400" />,
-    Gate: <PuzzlePieceIcon className="w-6 h-6 text-yellow-400" />,
-    WaterLine: <BeakerIcon className="w-6 h-6 text-yellow-400" />,
-    Plumbing: <WrenchScrewdriverIcon className="w-6 h-6 text-yellow-400" />,
+    Building: <BuildingOffice2Icon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
+    Residential: <HomeModernIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
+    Road: <TruckIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
+    Gate: <PuzzlePieceIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
+    WaterLine: <BeakerIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
+    Plumbing: <WrenchScrewdriverIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
   };
 
   const allcategories = services_offer.map((cat) => ({
@@ -183,9 +183,10 @@ export default function Services() {
             <div className="relative h-56 md:h-72 w-full">
               <img
                 src={
-                  allcategories.find((s) => s.id === activeModal)?.image ||
-                  "https://via.placeholder.com/800"
-                }
+                  allservices.find((s) => s.id === activeModal)?.image
+                      ? `/storage/${allservices.find((s) => s.id === activeModal).image}`
+                      : "https://via.placeholder.com/800"
+                  }
                 alt="Service"
                 className="w-full h-full object-cover rounded-t-3xl"
               />
@@ -220,15 +221,17 @@ export default function Services() {
                             Select a Category
                           </h4>
                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            {services_offer && services_offer.length > 0 ? (
-                              services_offer.map((cat) => (
-                                <button
+                            {allcategories && allcategories.length > 0 ? (
+                              allcategories.map((cat) => (
+                               <button
                                   key={cat.id}
                                   onClick={() => handleCategoryClick(cat.id)}
-                                  className="px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 transition duration-200 shadow-sm"
+                                  className="group px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl 
+                                            bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 
+                                            transition duration-200 shadow-sm flex items-center justify-center gap-2"
                                 >
                                   {cat.icon}
-                                  {cat.title}
+                                  <span>{cat.title}</span>
                                 </button>
                               ))
                             ) : (
