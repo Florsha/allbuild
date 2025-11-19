@@ -1,9 +1,64 @@
 import { useState } from "react";
-import { Head } from "@inertiajs/react";
+import { Head,useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Swal from 'sweetalert2';
 
 export default function Appointment() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const addForm = useForm({
+          date: "",
+          timeslots: [
+              { time: "", slot: "" },
+          ],
+    });
+
+    const closeAddModal = () => {
+        setIsModalOpen(false);
+        addForm.reset();
+    };
+
+    const addNewSlot = () => {
+      addForm.setData("timeslots", [
+        ...addForm.data.timeslots,
+        { time: "", slot: "" },
+      ])
+    }
+
+    const updateSlot = (index, key, value) => {
+      const updatedSlots = [...addForm.data.timeslots];
+      updatedSlots[index][key] = value;
+      addForm.setData("timeslots", updatedSlots);
+    }
+
+    const removeSlot = (index) => {
+      const updatedSlots = addForm.data.timeslots.filter((_, i) => i !== index);
+      addForm.setData("timeslots", updatedSlots);
+    }
+
+    const handleAdd = (e) =>{
+      e.preventDefault();
+      console.log("appointment form", addForm);
+      addForm.post(route('appointment.store'), {
+        onSuccess: () => {
+          closeAddModal();
+           Swal.fire({
+            icon: "success",
+            title: "Category Added!",
+            text: "Your new category has been successfully created.",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        },
+        onError: () => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to add category. Please check your input.",
+          });
+        },
+      });
+    }
 
   return (
     <AuthenticatedLayout>
@@ -32,7 +87,7 @@ export default function Appointment() {
                   #
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Start Time
+                  Time
                 </th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Slot
@@ -60,43 +115,92 @@ export default function Appointment() {
           </table>
         </div>
 
-        {/* Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-slideUp">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">Create Timeslot</h2>
-                    {/* Start Time Input */}
-                    <div className="mb-6">
-                        <label className="block text-gray-700 font-medium mb-2">Start Time</label>
-                        <input
-                        type="time"
-                        className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
-                        />
-                        <label className="block text-gray-700 font-medium mb-2">Slot</label>
-                        <input
-                        type="number"
-                        min={0}
-                        className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
-                        />
-                    </div>
-                    {/* Modal Actions */}
-                    <div className="flex justify-end gap-3">
-                        <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
-                        >
-                        Cancel
-                        </button>
-                        <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
-                        >
-                        Create
-                        </button>
-                    </div>
-                </div>
+{/* Modal */}
+{isModalOpen && (
+  <form onSubmit={handleAdd}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+        {/* Header */}
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 p-6">Create Timeslot</h2>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+          {/* Effective Date */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Effective Date</label>
+            <input
+              type="date"
+              value={addForm.data.date}
+              onChange={(e) => addForm.setData("date", e.target.value)}
+              className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+            />
           </div>
-        )}
+
+          {/* Time Slots */}
+          <h3 className="text-lg font-semibold mt-4 mb-2">Time Slots</h3>
+          <div className="space-y-4">
+            {addForm.data.timeslots.map((slot, index) => (
+              <div key={index} className="p-3 border rounded-xl">
+                <label className="block text-gray-700 font-medium mb-1">Time</label>
+                <input
+                  type="time"
+                  value={slot.time}
+                  onChange={(e) => updateSlot(index, "time", e.target.value)}
+                  className="w-full border-gray-300 rounded-xl mb-2 px-4 py-2"
+                />
+
+                <label className="block text-gray-700 font-medium mb-1">Slot</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={slot.slot}
+                  onChange={(e) => updateSlot(index, "slot", e.target.value)}
+                  className="w-full border-gray-300 rounded-xl px-4 py-2"
+                />
+
+                {addForm.data.timeslots.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeSlot(index)}
+                    className="text-red-500 text-sm mt-2"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addNewSlot}
+              className="w-full bg-green-600 text-white py-2 rounded-xl"
+            >
+              + Add Another Time Slot
+            </button>
+          </div>
+        </div>
+
+        {/* Modal Actions */}
+        <div className="flex justify-end gap-3 p-6 border-t">
+          <button
+            onClick={closeAddModal}
+            className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={addForm.processing}
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
+          >
+            {addForm.processing ? "Saving..." : "Create"}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+)}
+
       </div>
 
       {/* Optional animations */}

@@ -13,8 +13,13 @@ class AdminController extends Controller
 
     public function manageappointment(Request $request): Response
     {
-
         return Inertia::render('Admin/manageAppointment.jsx/appointment');
+    }
+
+    public function storeAppoitment(Request $request): Response
+    {
+
+        dd($request->all());
 
     }
 }

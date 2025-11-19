@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         //appointment
         Route::get('admin/appointment', [AdminController::class, 'manageappointment'])->name('manage.appointment');
+        Route::post('/admin/store/appointment', [AdminController::class, 'storeAppoitment'])->name('appointment.store');
 
     });
     
