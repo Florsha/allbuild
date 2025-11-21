@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Head,useForm } from "@inertiajs/react";
+import { Head,useForm,usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Swal from 'sweetalert2';
 
 export default function Appointment() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { flash, appointments } = usePage().props;
 
     const addForm = useForm({
           date: "",
@@ -44,8 +45,8 @@ export default function Appointment() {
           closeAddModal();
            Swal.fire({
             icon: "success",
-            title: "Category Added!",
-            text: "Your new category has been successfully created.",
+            title: "Appointment Schedule Added!",
+            text: "Your new Appointment Schedule has been successfully created.",
             timer: 2000,
             showConfirmButton: false,
           });
@@ -64,7 +65,7 @@ export default function Appointment() {
     <AuthenticatedLayout>
       <Head title="Appointment List" />
 
-      <div className="max-w-5xl mx-auto py-10 px-6">
+      <div className="max-w-full mx-auto py-10 px-6"> {/* made full width */}
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
@@ -79,18 +80,21 @@ export default function Appointment() {
         </div>
 
         {/* Timeslot Table Card */}
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div className="bg-white shadow-xl rounded-2xl overflow-x-auto"> {/* make table horizontally scrollable */}
+          <table className="min-w-full divide-y divide-gray-200 table-auto">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  #
+                  Date
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Time
                 </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Slot
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  Slot
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Available Slot
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Created By
@@ -98,22 +102,36 @@ export default function Appointment() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {/* Static example rows */}
-              <tr className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 text-sm text-gray-700 font-medium">1</td>
-                <td className="px-6 py-4 text-sm text-gray-700">08:00 AM</td>
-                <td className="px-6 py-4 text-sm text-gray-700">3</td>
-                <td className="px-6 py-4 text-sm text-gray-700">Admin</td>
-              </tr>
-              <tr className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 text-sm text-gray-700 font-medium">2</td>
-                <td className="px-6 py-4 text-sm text-gray-700">10:00 AM</td>
-                <td className="px-6 py-4 text-sm text-gray-700">5</td>
-                <td className="px-6 py-4 text-sm text-gray-700">Dr. Maria</td>
-              </tr>
+              {appointments.data.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-sm text-gray-700">{item.effective_date}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{item.slot}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">0</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{item.user?.name ?? "No User"}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
+          {/* Pagination */}
+          <div className="mt-6 flex justify-center">
+            <div className="flex flex-wrap gap-2">
+              {appointments.links.map((link, index) => (
+                <button
+                  key={index}
+                  disabled={!link.url}
+                  onClick={() => link.url && router.get(link.url, { preserveScroll: true })}
+                  className={`px-4 py-2 rounded-lg border transition-all ${
+                    link.active
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: link.label }}
+                />
+              ))}
+            </div>
         </div>
+      </div>
 
 {/* Modal */}
 {isModalOpen && (
@@ -132,6 +150,7 @@ export default function Appointment() {
               type="date"
               value={addForm.data.date}
               onChange={(e) => addForm.setData("date", e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
             />
           </div>

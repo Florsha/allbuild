@@ -19,9 +19,8 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { all_services, services_offer } = usePage().props;
+  const { all_services, services_offer, manage_appointment } = usePage().props;
 
-  console.log(services_offer);
   // const services = [
   //   {
   //     key: "renovation",
@@ -275,7 +274,7 @@ export default function Services() {
                     />
                   )}
                   {step === 2 && <ClientInfo />}
-                  {step === 3 && <Appointment />}
+                  {step === 3 && <Appointment manageAppointments={manage_appointment} />}
                   {step === 4 && <Location />}
 
                   {/* NAVIGATION BUTTONS */}

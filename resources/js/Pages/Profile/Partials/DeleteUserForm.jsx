@@ -47,7 +47,7 @@ export default function DeleteUserForm({ className = '' }) {
 
     return (
         <section className={`space-y-6 ${className}`}>
-            <header>
+            {/* <header>
                 <h2 className="text-lg font-medium text-gray-900">
                     Delete Account
                 </h2>
@@ -58,11 +58,11 @@ export default function DeleteUserForm({ className = '' }) {
                     please download any data or information that you wish to
                     retain.
                 </p>
-            </header>
+            </header> */}
 
-            <DangerButton onClick={confirmUserDeletion}>
+            {/* <DangerButton onClick={confirmUserDeletion}>
                 Delete Account
-            </DangerButton>
+            </DangerButton> */}
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
