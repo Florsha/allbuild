@@ -60,7 +60,6 @@ const renderCalendarDays = () => {
     const dayNumber = i - firstDayOfWeek + 1;
     const isValidDay = dayNumber > 0 && dayNumber <= daysInMonth;
 
-    // Build full date string yyyy-mm-dd
     let fullDate = null;
     let isAvailable = false;
     let isPast = false;
@@ -70,27 +69,27 @@ const renderCalendarDays = () => {
       const dayStr = String(dayNumber).padStart(2, "0");
       fullDate = `${year}-${monthNumber}-${dayStr}`;
 
-      const today = new Date().setHours(0, 0, 0, 0);
-      const currentDate = new Date(fullDate).setHours(0, 0, 0, 0);
+      const now = new Date();
 
-      const slotsForDate = manageAppointments.filter(a => a.effective_date === fullDate);
+      // Get all slots for this date
+      const slotsForDate = manageAppointments.filter(a => {
+        return a.effective_date === fullDate;
+      });
 
-      // --- CHECK IF AVAILABLE ---
-      if (currentDate > today) {
-        // Future date → automatically available if it exists in DB
-        isAvailable = slotsForDate.length > 0;
-      } else if (currentDate === today) {
-        // Today → check time
-        const now = new Date();
-
-        isAvailable = slotsForDate.some(slot => {
-          const slotDateTime = new Date(`${slot.effective_date}T${slot.effective_time}`);
-          return slotDateTime > now; // time must be upcoming
+      // No slots = no color
+      if (slotsForDate.length > 0) {
+        const upcomingSlots = slotsForDate.filter(slot => {
+          const slotDT = new Date(`${slot.effective_date}T${slot.time}`);
+          return slotDT > now;
         });
-      } else {
-        // Past date
-        isAvailable = false;
-        isPast = true;
+
+        if (upcomingSlots.length > 0) {
+          // At least 1 future time = available
+          isAvailable = true;
+        } else {
+          // All times are past = past
+          isPast = true;
+        }
       }
     }
 
@@ -98,7 +97,7 @@ const renderCalendarDays = () => {
  
     
     let bgColor = "bg-white";
-    // if (isPast) bgColor = "bg-red-300";
+    if (isPast) bgColor = "bg-red-300";
     if (isAvailable) bgColor = "bg-[#FBDC62]";
 
         // clickable only for available

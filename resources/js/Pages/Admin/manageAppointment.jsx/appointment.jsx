@@ -5,8 +5,10 @@ import Swal from 'sweetalert2';
 
 export default function Appointment() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [IsEditAppointment, setIsEditAppointment] = useState(false);
   const { flash, appointments } = usePage().props;
 
+    //Add Appointment Side
     const addForm = useForm({
           date: "",
           timeslots: [
@@ -61,6 +63,76 @@ export default function Appointment() {
       });
     }
 
+    //Edit Appointment Side
+    const editAppointment = useForm({
+      date: "",
+      timeslots: [
+          { time: "", slot: "" },
+      ],
+      
+    });
+
+    const UpdateaddNewSlot = () => {
+      editAppointment.setData("timeslots", [
+        ...editAppointment.data.timeslots,
+        { time: "", slot: "" },
+      ])
+    }
+
+    const handleAppointmentUpdate = (e) =>{
+      e.preventDefault();
+
+      editAppointment.put(route("admin.appointment.edit", editAppointment.data.id), {
+        onSuccess: () => {  
+        closeEditAppointment();
+           Swal.fire({
+              icon: "success",
+              title: "Updated!",
+              text: "Category updated successfully.",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+        },
+         onError: () => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to update category. Please try again.",
+            });
+          },
+      })
+    }
+
+    const openEditAppointment = async (appointment) => {
+
+      const response = await axios.get(
+          route("appointment.slots.byDate", appointment.effective_date)
+      );
+
+      const allSlot = response.data;
+   
+      const formattedSlots = allSlot.map(slot => ({
+        id: slot.id,
+        time: slot.time,
+        slot: slot.slot
+      }));
+
+      editAppointment.setData({
+        appointment_date: appointment.effective_date,
+
+        timeslots: formattedSlots,
+
+        created_by: ''
+      })
+
+      setIsEditAppointment(true);
+    }
+
+     const closeEditAppointment = () => {
+        setIsEditAppointment(false);
+        editAppointment.reset(); // optional but recommended
+      };
+
   return (
     <AuthenticatedLayout>
       <Head title="Appointment List" />
@@ -99,6 +171,9 @@ export default function Appointment() {
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Created By
                 </th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -109,6 +184,13 @@ export default function Appointment() {
                   <td className="px-6 py-4 text-sm text-gray-700">{item.slot}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">0</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{item.user?.name ?? "No User"}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">     
+                    <button 
+                        onClick={() => openEditAppointment(item)}
+                        className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
+                        Edit
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -213,6 +295,111 @@ export default function Appointment() {
             className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
           >
             {addForm.processing ? "Saving..." : "Create"}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+)}
+
+
+{/* Edit Modal */}
+
+{IsEditAppointment && (
+  <form onSubmit={handleAppointmentUpdate}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+        {/* Header */}
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 p-6">Update Timeslot</h2>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+          {/* Effective Date */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Effective Date</label>
+            <input
+              type="date"
+              value={editAppointment.data.appointment_date}
+              onChange={(e) => editAppointment.setData("appointment_date", e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
+              className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+            />
+          </div>
+
+          {/* Time Slots */}
+          <h3 className="text-lg font-semibold mt-4 mb-2">Time Slots</h3>
+          <div className="space-y-4">
+            {editAppointment.data.timeslots.map((slot, index) => (
+              <div key={index} className="p-3 border rounded-xl">
+                <label className="flex items-center justify-between text-gray-700 font-medium mb-1">
+                  <span>Time</span>
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
+                    #{index + 1} Slot
+                  </span>
+                </label>
+                <input
+                  type="time"
+                  value={slot.time}
+                  onChange={(e) => {
+                      const updated = [...editAppointment.data.timeslots];
+                       updated[index].time = e.target.value;
+                        editAppointment.setData("timeslots", updated);
+                    }
+                  }
+                  className="w-full border-gray-300 rounded-xl mb-2 px-4 py-2"
+                />
+
+                <label className="block text-gray-700 font-medium mb-1">Slot</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={slot.slot}
+                  onChange={(e) => {
+                      const updated = [...editAppointment.data.timeslots];
+                      updated[index].slot = e.target.value;
+                      editAppointment.setData("timeslots", updated);
+                    }
+                  }
+                  className="w-full border-gray-300 rounded-xl px-4 py-2"
+                />
+
+                  {editAppointment.data.timeslots.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeSlot(index)}
+                    className="text-red-500 text-sm mt-2"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={UpdateaddNewSlot}
+              className="w-full bg-green-600 text-white py-2 rounded-xl"
+            >
+              + Add Another Time Slot
+            </button>
+
+          </div>
+        </div>
+
+        {/* Modal Actions */}
+        <div className="flex justify-end gap-3 p-6 border-t">
+          <button
+            onClick={closeEditAppointment}
+            className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={editAppointment.processing}
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
+          >
+            {editAppointment.processing ? "Saving..." : "Update"}
           </button>
         </div>
       </div>
