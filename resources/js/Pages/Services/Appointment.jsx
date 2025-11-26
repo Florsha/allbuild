@@ -1,152 +1,203 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import {
-  CalendarDaysIcon,
-  ClockIcon,
-  ClipboardDocumentListIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import TimeSlotModal from "./TimeSlotModal";
 
-export default function Appointment() {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [notes, setNotes] = useState("");
-  const [isBooked, setIsBooked] = useState(false);
+export default function CalendarBooking({manageAppointments}) {
+  console.log("manageAppointments", manageAppointments);
 
-  const times = ["07:00 AM", "09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"];
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
-  const handleBooking = () => {
-    if (!date || !time) {
-      alert("Please select a date and time before scheduling.");
-      return;
-    }
-    setIsBooked(true);
-    setTimeout(() => setIsBooked(false), 2000);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState("Month");
+
+  // Get calendar data
+  const { year, month, monthName, daysInMonth, firstDayOfWeek } = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfWeek = new Date(year, month, 1).getDay();
+    
+    return { year, month, monthName, daysInMonth, firstDayOfWeek };
+  }, [currentDate]);
+
+  const handleSelectDate = (date) => {
+
+     const slotsForDate = manageAppointments.filter(
+      (item) => item.effective_date === date
+    );
+    
+    setSelectedSlots(slotsForDate);
+    setSelectedDate(date);
+    setShowModal(true);
+    console.log("Selected slotsForDate:", slotsForDate);
+
+    // Later: open modal to show timeslots
   };
 
+  // Navigate months
+  const navigateMonth = (direction) => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + direction);
+      return newDate;
+    });
+  };
+
+  const availableDates = useMemo(() => {
+  return new Set(manageAppointments.map(a => a.effective_date));
+}, [manageAppointments]);
+
+const renderCalendarDays = () => {
+  const days = [];
+  const totalCells = Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const dayNumber = i - firstDayOfWeek + 1;
+    const isValidDay = dayNumber > 0 && dayNumber <= daysInMonth;
+
+    let fullDate = null;
+    let isAvailable = false;
+    let isPast = false;
+
+    if (isValidDay) {
+      const monthNumber = String(month + 1).padStart(2, "0");
+      const dayStr = String(dayNumber).padStart(2, "0");
+      fullDate = `${year}-${monthNumber}-${dayStr}`;
+
+      const now = new Date();
+
+      // Get all slots for this date
+      const slotsForDate = manageAppointments.filter(a => {
+        return a.effective_date === fullDate;
+      });
+
+      // No slots = no color
+      if (slotsForDate.length > 0) {
+        const upcomingSlots = slotsForDate.filter(slot => {
+          const slotDT = new Date(`${slot.effective_date}T${slot.time}`);
+          return slotDT > now;
+        });
+
+        if (upcomingSlots.length > 0) {
+          // At least 1 future time = available
+          isAvailable = true;
+        } else {
+          // All times are past = past
+          isPast = true;
+        }
+      }
+    }
+
+    // Background logic  
+ 
+    
+    let bgColor = "bg-white";
+    if (isPast) bgColor = "bg-red-300";
+    if (isAvailable) bgColor = "bg-[#FBDC62]";
+
+        // clickable only for available
+    const clickableClasses = isAvailable
+      ? "cursor-pointer hover:brightness-110"
+      : "cursor-default";
+
+   days.push(
+      <motion.div
+        key={i}
+        onClick={() => isAvailable && handleSelectDate(fullDate)}
+        className={`min-h-32 border border-gray-200 p-2 ${bgColor} ${clickableClasses}`}
+        whileHover={isAvailable ? { scale: 1.03 } : {}}
+      >
+        {isValidDay && (
+          <div className="text-sm font-semibold text-gray-700">{dayNumber}</div>
+        )}
+      </motion.div>
+    );
+  }
+  return days;
+};
+
   return (
-    <motion.div
-      className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-100 p-8 md:p-12 rounded-3xl shadow-inner"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* LEFT COLUMN */}
-      <div className="space-y-8">
-        {/* Date Picker */}
-        <SectionCard
-          icon={<CalendarDaysIcon className="w-6 h-6 text-amber-600" />}
-          title="Select Work Date"
-        >
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none text-gray-800"
-          />
-        </SectionCard>
-
-        {/* Time Picker */}
-        <SectionCard
-          icon={<ClockIcon className="w-6 h-6 text-amber-600" />}
-          title="Select Work Time"
-        >
-          <div className="grid grid-cols-2 gap-3">
-            {times.map((t) => (
-              <motion.button
-                key={t}
-                onClick={() => setTime(t)}
-                whileTap={{ scale: 0.97 }}
-                className={`py-3 text-sm font-medium rounded-lg border transition-all ${
-                  time === t
-                    ? "bg-amber-600 text-white border-amber-700 shadow-md"
-                    : "bg-white border-gray-300 text-gray-700 hover:border-amber-400 hover:text-amber-600"
-                }`}
-              >
-                {t}
-              </motion.button>
-            ))}
-          </div>
-        </SectionCard>
-
-        {/* Notes */}
-        <SectionCard
-          icon={<ClipboardDocumentListIcon className="w-6 h-6 text-amber-600" />}
-          title="Additional Details (Optional)"
-        >
-          <textarea
-            rows="3"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add work details, site info, or requirements..."
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none text-gray-800"
-          ></textarea>
-        </SectionCard>
+    <div className="max-w-7xl mx-auto p-6 bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6 pb-4 border-b">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Book Calendar</h1>
+        </div>
       </div>
 
-      {/* RIGHT COLUMN – Summary */}
-      <motion.div
-        className="bg-white rounded-2xl shadow-xl p-8 flex flex-col justify-between border border-gray-200"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3">
-            Schedule Summary
-          </h3>
-          <div className="space-y-3 text-gray-700">
-            <SummaryItem label="Work Date" value={date || "Not selected"} />
-            <SummaryItem label="Time Slot" value={time || "Not selected"} />
-            {notes && <SummaryItem label="Details" value={notes} />}
+      {/* Calendar Navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold text-gray-900">{monthName}</h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigateMonth(-1)}
+              className="p-2 hover:bg-gray-100 rounded-lg"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => navigateMonth(1)}
+              className="p-2 hover:bg-gray-100 rounded-lg"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
-
-        <motion.button
-          onClick={handleBooking}
-          whileTap={{ scale: 0.98 }}
-          className={`w-full mt-8 py-3 rounded-xl font-semibold transition-all ${
-            isBooked
-              ? "bg-green-600 text-white shadow-lg"
-              : "bg-amber-600 hover:bg-amber-700 text-white shadow-md"
-          }`}
-        >
-          {isBooked ? (
-            <span className="flex items-center justify-center gap-2">
-              <CheckCircleIcon className="w-5 h-5" />
-              Appointment Confirmed
-            </span>
-          ) : (
-            "Confirm Appointment"
-          )}
-        </motion.button>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-/* Reusable Card Component */
-function SectionCard({ icon, title, children }) {
-  return (
-    <motion.div
-      className="bg-white rounded-2xl shadow-md p-6 space-y-4 border border-gray-200 hover:shadow-lg transition"
-      whileHover={{ scale: 1.01 }}
-    >
-      <div className="flex items-center gap-3">
-        {icon}
-        <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
+        
+        <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+          {["Month", "Week", "Day"].map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+                view === v
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
       </div>
-      {children}
-    </motion.div>
-  );
-}
 
-/* Reusable Summary Row */
-function SummaryItem({ label, value }) {
-  return (
-    <div className="flex justify-between text-sm">
-      <span className="font-medium text-gray-600">{label}:</span>
-      <span className="text-gray-900">{value}</span>
+      {/* Calendar Grid */}
+      <div className="border border-gray-300 rounded-lg overflow-hidden">
+        {/* Weekday Headers */}
+        <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-300">
+          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(
+            (day) => (
+              <div
+                key={day}
+                className="p-4 text-center text-sm font-semibold text-gray-700 border-r border-gray-200 last:border-r-0"
+              >
+                {day}
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Calendar Days */}
+        <div className="grid grid-cols-7">
+          {renderCalendarDays()}
+        </div>
+      </div>
+
+        <TimeSlotModal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          slotsForDate={selectedSlots}
+          selectedDate={selectedDate}
+          onSelectSlot={(slot) => setSelectedSlot(slot)}
+        />
+
     </div>
   );
+  
 }

@@ -59,6 +59,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/store/categoryList', [CategoryController::class, 'storeListCateg'])->name('categoryList.store');
         Route::put('/admin/categoryList/{category}', [CategoryController::class, 'updateCategList'])->name('categoryList.update');
         Route::get('/admin/dashboard', [DashboardCtrl::class, 'dashboard'])->name('dashboard');
+
+        //appointment
+        Route::get('admin/appointment', [AdminController::class, 'manageappointment'])->name('manage.appointment');
+        Route::post('/admin/store/appointment', [AdminController::class, 'storeAppoitment'])->name('appointment.store');
+        Route::put('/admin/appointment/update/{appointment}', [AdminController::class, 'updateAppointment'])->name('admin.appointment.edit');
+
+        Route::get('admin/appointment/slot/{date}', [AdminController::class, 'getSlotsByDate'])->name('appointment.slots.byDate');
+
     });
     
 

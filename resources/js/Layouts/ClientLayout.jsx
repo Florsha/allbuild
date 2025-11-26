@@ -2,7 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Bars3Icon,
   XMarkIcon,
@@ -14,6 +14,18 @@ import {
 export default function ClientLayout({ header, children }) {
   const user = usePage().props.auth.user;
   const [open, setOpen] = useState(false);
+  const menuRef = useRef();
+
+    // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,15 +50,45 @@ export default function ClientLayout({ header, children }) {
               </NavLink> */}
             </div>
 
-            <div className="hidden sm:flex items-center space-x-4">
-              {/* <span className="text-sm font-medium text-gray-700">{user?.name}</span> */}
-              <Link
-                href={route('profile.edit')}
-                className="flex items-center rounded-full bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600 transition"
+           <div className="relative hidden sm:flex items-center space-x-4" ref={menuRef}>
+
+            <button
+              onClick={() => setOpen(!open)}
+              className="flex items-center rounded-full bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600 transition"
+            >
+              <UserCircleIcon className="h-5 w-5 mr-1" />
+              {user?.name || "Profile"}
+              <svg
+                className="ml-1 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <UserCircleIcon className="h-5 w-5 mr-1" /> Profile
-              </Link>
-            </div>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={open ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {open && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
+                <Link
+                  href={route("profile.edit")}
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Edit Profile
+                </Link>
+                <Link
+                  href={route("logout")}
+                  method="post"
+                  as="button"
+                  className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Logout
+                </Link>
+              </div>
+            )}
+          </div>
+
 
             <div className="sm:hidden flex items-center">
               <button
