@@ -102,14 +102,53 @@ export default function Location({onLocationChange}) {
           mapContainerStyle={containerStyle}
           center={mapCenter}
           zoom={15}
+          // onClick={(e) => {
+          //   // allow clicking on map to place marker manually
+          //   const lat = e.latLng.lat();
+          //   const lng = e.latLng.lng();
+          //   setMarkerPosition({ lat, lng });
+          // }}
           onClick={(e) => {
-            // allow clicking on map to place marker manually
             const lat = e.latLng.lat();
             const lng = e.latLng.lng();
-            setMarkerPosition({ lat, lng });
+
+            const newPos = { lat, lng };
+            setMarkerPosition(newPos);
+            setMapCenter(newPos);
+
+            // Reverse geocode
+            const geocoder = new window.google.maps.Geocoder();
+            geocoder.geocode({ location: newPos }, (results, status) => {
+              if (status === "OK" && results[0]) {
+                setAddress(results[0].formatted_address);
+              } else {
+                setAddress("No address found");
+              }
+            });
           }}
         >
-          <Marker position={markerPosition} draggable={true} />
+          {/* <Marker position={markerPosition} draggable={true} /> */}
+          <Marker
+            position={markerPosition}
+            draggable={true}
+            onDragEnd={(e) => {
+              const lat = e.latLng.lat();
+              const lng = e.latLng.lng();
+              const newPos = { lat, lng };
+
+              setMarkerPosition(newPos);
+              setMapCenter(newPos);
+
+              const geocoder = new window.google.maps.Geocoder();
+              geocoder.geocode({ location: newPos }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                  setAddress(results[0].formatted_address);
+                } else {
+                  setAddress("No address found");
+                }
+              });
+            }}
+          />
         </GoogleMap>
       </LoadScript>
 
