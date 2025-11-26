@@ -16,12 +16,7 @@ const defaultCenter = {
   lng: 123.8854,
 };
 
-<<<<<<< HEAD
-export default function Location() {
-  // const geocoder = new window.google.maps.Geocoder();
-=======
 export default function Location({onLocationChange}) {
->>>>>>> 37050fef8088b0875a19d7c89fe262ae2f64b9f7
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState(defaultCenter);
   const [address, setAddress] = useState("");
