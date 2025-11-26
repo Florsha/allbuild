@@ -24,13 +24,22 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.2.0",
+        "@inertiajs/inertia": "^0.11.1",
         "@react-google-maps/api": "^2.20.7",
+<<<<<<< HEAD
         "framer-motion": "^12.23.22",
         "jquery": "^3.7.1",
+=======
+        "cbor": "^10.0.11",
+        "framer-motion": "^12.23.24",
+        "html5-qrcode": "^2.3.8",
+        "jsqr": "^1.4.0",
+>>>>>>> dbd32c94679aafff4546b609bccf4637baf9646d
         "leaflet": "1.9",
         "lobibox": "^1.2.7",
         "lucide-react": "^0.544.0",
         "react-leaflet": "^4.2.1",
-        "sweetalert2": "^11.26.3"
+        "sweetalert2": "^11.26.3",
+        "tesseract.js": "^6.0.1"
     }
 }

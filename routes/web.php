@@ -4,10 +4,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\DashboardCtrl;
-use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IDVerificationController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/categoryList', [CategoryController::class, 'index'])->name('categoryList');
 
         Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
-        Route::post('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
         Route::get('admin/subcateg', [CategoryController::class, 'subcategory'])->name('admin.subcateg');
@@ -68,10 +68,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/admin/appointment/update/{appointment}', [AdminController::class, 'updateAppointment'])->name('admin.appointment.edit');
 
         Route::get('admin/appointment/slot/{date}', [AdminController::class, 'getSlotsByDate'])->name('appointment.slots.byDate');
+
     });
     
 
 });
+
+Route::get('/id-verification', [IDVerificationController::class, 'index'])->name('id.verification');
+Route::post('/id-verification/process', [IDVerificationController::class, 'process'])->name('id.verification.process');
 
 
 
