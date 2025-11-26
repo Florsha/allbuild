@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
+use App\Http\Controllers\Admin\AdminController; 
 use Inertia\Inertia;
 
 Route::get('/', function () {
