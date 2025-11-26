@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { usePage,Head } from "@inertiajs/react";
+import { usePage,Head, router } from "@inertiajs/react";
 import {
   WrenchScrewdriverIcon,
   BuildingOffice2Icon,
@@ -19,7 +19,26 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { all_services, services_offer, manage_appointment } = usePage().props;
+  const { all_services, services_offer, manage_appointment, flash } = usePage().props;
+  const [showFlash, setShowFlash] = useState(!!flash?.success);
+  const [formData, setFormData] = useState({
+    services_id: null,
+    category: null,
+    description: "",
+    file: null,
+    appointment: null,
+    location: {
+      lat: null,
+      lng: null,
+      address: ""
+    }
+  })
+
+  const handleCategorySelect = (catId) => {
+    console.log("Cat Id", catId);
+     setFormData(prev => ({ ...prev, category: catId }));
+      setSelectedCategory(catId);
+  }
 
   // const services = [
   //   {
@@ -86,15 +105,6 @@ export default function Services() {
     icon: iconMap[service.title] || <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
   }));
 
-  // const categories = [
-  //   "Building",
-  //   "Residential",
-  //   "Road",
-  //   "Gate",
-  //   "WaterLine",
-  //   "Plumbing",
-  // ];
-
   const categoryIconMap = {
     Building: <BuildingOffice2Icon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
     Residential: <HomeModernIcon className="w-6 h-6 text-yellow-400 group-hover:text-white" />,
@@ -109,10 +119,40 @@ export default function Services() {
     title: cat.title,
     icon: categoryIconMap[cat.title] || <PuzzlePieceIcon className="w-6 h-6 text-yellow-400" />,
   }));
-  const handleCategoryClick = (cat) => {
-    setSelectedCategory(cat);
+  const handleCategoryClick = (catId) => {
+    setSelectedCategory(catId);
+    setFormData(prev => ({ ...prev, category: catId }));
     setStep(1);
   };
+
+  useEffect(() => {
+    if (flash?.success) {
+        setShowFlash(true);
+
+        // Play alert sound
+        const audio = new Audio("/sounds/notify.mp3"); // put your alert sound in public/sounds/
+        audio.play();
+
+        // Auto-close after 5 seconds
+        const timer = setTimeout(() => {
+            setShowFlash(false);
+        }, 5000);
+
+        return () => clearTimeout(timer);
+    }
+}, [flash?.success]);
+
+  const handleSubmit = () => {
+    console.log("Submitting...", formData);
+
+    router.post('/services-request', formData, {
+      onSuccess: () => {
+        setActiveModal(null);
+            console.log("Saved!");
+        }
+    })
+    
+  }
 
   return (
     <AuthenticatedLayout>
@@ -163,7 +203,13 @@ export default function Services() {
                     {service.description}
                   </p>
                   <button
-                    onClick={() => setActiveModal(service.id)}
+                     onClick={() => {
+                        setActiveModal(service.id);
+                        setFormData((prev) => ({
+                          ...prev,
+                          services_id: service.id
+                        }));
+                      }}
                     className="mt-5 bg-yellow-400 text-gray-900 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 shadow-md hover:shadow-lg transition"
                   >
                     Select
@@ -270,12 +316,29 @@ export default function Services() {
                       service={allservices.find((s) => s.id === activeModal)}
                       allcategories={allcategories}
                       selectedCategory={selectedCategory}
-                      onCategorySelect={setSelectedCategory}
+                      onCategorySelect={handleCategorySelect}
                     />
                   )}
-                  {step === 2 && <ClientInfo />}
-                  {step === 3 && <Appointment manageAppointments={manage_appointment} />}
-                  {step === 4 && <Location />}
+                  {step === 2 && <ClientInfo
+                    description={formData.description}
+                    fileBluePrint = {formData.file}
+                    onDescriptionChange={(val) =>
+                      setFormData(prev => ({ ...prev, description: val }))
+                    }
+                    onFileChange={(val) => 
+                       setFormData(prev => ({ ...prev, file: val }))
+                    }
+                  />}
+                  {step === 3 && <Appointment manageAppointments={manage_appointment}
+                    onAppointmentChange={(val) =>
+                      setFormData(prev => ({ ...prev, appointment: val }))
+                    }
+                  />}
+                  {step === 4 && <Location 
+                     onLocationChange={(locationObj) =>
+                        setFormData(prev => ({ ...prev, location: locationObj }))
+                      }
+                  />}
 
                   {/* NAVIGATION BUTTONS */}
                   <div className="flex justify-between mt-10">
@@ -296,7 +359,7 @@ export default function Services() {
                       </button>
                     ) : (
                       <button
-                        onClick={() => alert('Form submitted!')}
+                        onClick={handleSubmit}
                         className="ml-auto px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold transition"
                       >
                         Submit
@@ -320,6 +383,31 @@ export default function Services() {
           expert team.
         </p>
       </section>
+        
+        {showFlash && (
+          <div 
+              className="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl 
+                        border-l-4 border-green-700 flex items-center gap-3 animate-slideIn"
+          >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+              >
+                  <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                  />
+              </svg>
+              <span>{flash.success}</span>
+          </div>
+      )}
+
+
     </AuthenticatedLayout>
   );
 }

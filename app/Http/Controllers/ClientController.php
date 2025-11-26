@@ -8,6 +8,8 @@ use Inertia\Response;
 use App\Models\services; 
 use App\Models\subcategory;
 use App\Models\ManageAppointment;
+use App\Models\ClientRequest;
+use App\Models\ClientAssign;
 
 class ClientController extends Controller
 {
@@ -26,5 +28,38 @@ class ClientController extends Controller
             'manage_appointment' => $manage_appointment 
         ]);
 
+    }
+
+    public function StoreClientRequest(Request $request){
+        $user = auth()->user();
+        $validated = $request->validate([
+            'services_id' => 'required|integer',
+            'category' => 'required|integer',
+            'description' => 'required|string',
+            'appointment' => 'required|integer',
+            'file' => 'required|file|max:5000',
+            'location.lat' => 'required|numeric',
+            'location.lng' => 'required|numeric',
+            'location.address' => 'required|string',
+        ]);
+            
+        $filepath = $request->file('file')->store('blueprints', 'public');
+
+        $clientAssign = ClientAssign::create([
+            'appointment_id' => $validated['appointment'],
+            'client_id' => $user->id
+        ]);
+
+        ClientRequest::create([
+            'services_id' => $validated['services_id'],
+            'subcategory_id' => $validated['category'],
+            'client_assign_id' => $clientAssign->id,
+            'project_description' => $validated['description'],
+            'Upload_Blueprint' => $filepath,
+            'latitude' => $validated['location']['lat'],
+            'longitude' => $validated['location']['lng']
+        ]);
+        
+         return redirect()->route('services')->with('success', 'Appointment Submitted');
     }
 }

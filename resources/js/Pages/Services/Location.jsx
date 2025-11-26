@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback,useEffect } from "react";
 import {
   GoogleMap,
   LoadScript,
@@ -16,7 +16,7 @@ const defaultCenter = {
   lng: 123.8854,
 };
 
-export default function Location() {
+export default function Location({onLocationChange}) {
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState(defaultCenter);
   const [address, setAddress] = useState("");
@@ -57,6 +57,14 @@ export default function Location() {
       alert("Geocoding failed: " + data.status);
     }
   };
+
+  useEffect(() => {
+    onLocationChange({
+      lat: markerPosition.lat,
+      lng: markerPosition.lng,
+      address: address
+    });
+  }, [markerPosition, address]);
 
   return (
     <div className="space-y-4">

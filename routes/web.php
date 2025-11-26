@@ -46,6 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:2')->group(function () {
         Route::get('/contractor', [ContractorController::class, 'index'])->name('contractor');
         Route::get('/services', [ClientController::class, 'client'])->name('services');
+
+        Route::post('/services-request', [ClientController::class, 'StoreClientRequest'])->name('services.request.store');
     });
 
     Route::middleware('role:1')->group(function () {
