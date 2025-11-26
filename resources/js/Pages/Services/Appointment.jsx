@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import TimeSlotModal from "./TimeSlotModal";
 
-export default function CalendarBooking({manageAppointments}) {
+export default function CalendarBooking({manageAppointments, onAppointmentChange}) {
   console.log("manageAppointments", manageAppointments);
 
   const [showModal, setShowModal] = useState(false);
@@ -194,7 +194,10 @@ const renderCalendarDays = () => {
           onClose={() => setShowModal(false)}
           slotsForDate={selectedSlots}
           selectedDate={selectedDate}
-          onSelectSlot={(slot) => setSelectedSlot(slot)}
+           onSelectSlot={(slot) => {
+            setSelectedSlot(slot);
+            onAppointmentChange(slot.id); // <-- send value UP to parent
+          }}
         />
 
     </div>

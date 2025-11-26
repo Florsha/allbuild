@@ -72,12 +72,53 @@ export default function Appointment() {
       
     });
 
-    const UpdateaddNewSlot = () => {
-      editAppointment.setData("timeslots", [
-        ...editAppointment.data.timeslots,
-        { time: "", slot: "" },
-      ])
+    const hasDuplicateSlots = (timeSlots) => {
+      const seen = new Set();
+
+      for (let slot of timeSlots) {
+        const key = `${slot.time}-${slot.slot}`; // unique combination
+        if (seen.has(key)) return true;
+        seen.add(key);
+      }
+      return false;
     }
+
+    const UpdateaddNewSlot = () => {
+      // editAppointment.setData("timeslots", [
+      //   ...editAppointment.data.timeslots,
+      //   { time: "", slot: "" },
+      // ])
+
+      const timeslots = [...editAppointment.data.timeslots, { time: "", slot: "" }];
+      console.log("timeslots::", timeslots);
+        if(hasDuplicateSlots(timeslots)){
+           Swal.fire({
+            icon: "error",
+            title: "Duplicate Slot",
+            text: "You have duplicate time/slot entries. Please fix before adding a new one.",
+          });
+          return;
+        }
+
+        editAppointment.setData("timeslots", timeslots);
+    }
+
+    const handleTimeSlotChange = (index, field, value) => {
+      const updated = [...editAppointment.data.timeslots];
+      updated[index][field] = value;
+
+      // Check duplicates
+      if (hasDuplicateSlots(updated)) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Slot Detected",
+          text: "You cannot use the same time and slot combination in multiple entries.",
+        });
+        return; // prevent setting duplicate
+      }
+
+      editAppointment.setData("timeslots", updated);
+    };
 
     const handleAppointmentUpdate = (e) =>{
       e.preventDefault();
@@ -128,10 +169,10 @@ export default function Appointment() {
       setIsEditAppointment(true);
     }
 
-     const closeEditAppointment = () => {
-        setIsEditAppointment(false);
-        editAppointment.reset(); // optional but recommended
-      };
+    const closeEditAppointment = () => {
+      setIsEditAppointment(false);
+      editAppointment.reset(); // optional but recommended
+    };
 
   return (
     <AuthenticatedLayout>
@@ -304,7 +345,6 @@ export default function Appointment() {
 
 
 {/* Edit Modal */}
-
 {IsEditAppointment && (
   <form onSubmit={handleAppointmentUpdate}>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn p-4">
@@ -340,12 +380,7 @@ export default function Appointment() {
                 <input
                   type="time"
                   value={slot.time}
-                  onChange={(e) => {
-                      const updated = [...editAppointment.data.timeslots];
-                       updated[index].time = e.target.value;
-                        editAppointment.setData("timeslots", updated);
-                    }
-                  }
+                  onChange={(e) => handleTimeSlotChange(index, "time", e.target.value)}
                   className="w-full border-gray-300 rounded-xl mb-2 px-4 py-2"
                 />
 
@@ -354,12 +389,7 @@ export default function Appointment() {
                   type="number"
                   min={0}
                   value={slot.slot}
-                  onChange={(e) => {
-                      const updated = [...editAppointment.data.timeslots];
-                      updated[index].slot = e.target.value;
-                      editAppointment.setData("timeslots", updated);
-                    }
-                  }
+                 onChange={(e) => handleTimeSlotChange(index, "slot", e.target.value)}
                   className="w-full border-gray-300 rounded-xl px-4 py-2"
                 />
 
