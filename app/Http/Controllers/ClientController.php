@@ -19,10 +19,11 @@ class ClientController extends Controller
 
         $services = services::all();
         $subcateg = subcategory::select('id','title')->get();
-
+        $client_assign = ClientAssign::get();
         $manage_appointment = ManageAppointment::with('user:id,name')->get();
 
            return Inertia::render('Services/client',[
+            "client_assign_slot" => $client_assign,
             "all_services" => $services,
             "services_offer" => $subcateg,
             'manage_appointment' => $manage_appointment 

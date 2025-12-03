@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import TimeSlotModal from "./TimeSlotModal";
 
-export default function CalendarBooking({manageAppointments, onAppointmentChange}) {
+export default function CalendarBooking({client_slot, manageAppointments, onAppointmentChange}) {
   console.log("manageAppointments", manageAppointments);
 
   const [showModal, setShowModal] = useState(false);
@@ -24,7 +24,7 @@ export default function CalendarBooking({manageAppointments, onAppointmentChange
     
     return { year, month, monthName, daysInMonth, firstDayOfWeek };
   }, [currentDate]);
-
+ 
   const handleSelectDate = (date) => {
 
      const slotsForDate = manageAppointments.filter(
@@ -34,7 +34,6 @@ export default function CalendarBooking({manageAppointments, onAppointmentChange
     setSelectedSlots(slotsForDate);
     setSelectedDate(date);
     setShowModal(true);
-    console.log("Selected slotsForDate:", slotsForDate);
 
     // Later: open modal to show timeslots
   };
@@ -63,7 +62,8 @@ const renderCalendarDays = () => {
     let fullDate = null;
     let isAvailable = false;
     let isPast = false;
-
+    let isFullyBookedDay = false;
+  
     if (isValidDay) {
       const monthNumber = String(month + 1).padStart(2, "0");
       const dayStr = String(dayNumber).padStart(2, "0");
@@ -71,6 +71,12 @@ const renderCalendarDays = () => {
 
       const now = new Date();
 
+      const bookingCount = {};
+        client_slot.forEach(b => {
+          bookingCount[b.appointment_id] =
+            (bookingCount[b.appointment_id] || 0) + 1;
+        });
+        
       // Get all slots for this date
       const slotsForDate = manageAppointments.filter(a => {
         return a.effective_date === fullDate;
@@ -78,27 +84,41 @@ const renderCalendarDays = () => {
 
       // No slots = no color
       if (slotsForDate.length > 0) {
+        const allFull = slotsForDate.every(slot => {
+          console.log(slot);
+          const booked = bookingCount[slot.id] || 0;
+          const capacity = slot.slot ?? 1;
+          return booked >= capacity;
+        });
+
+        if (allFull) {
+          isFullyBookedDay = true;
+        }
+      }
+
+      // Detect available / past (only if not full)
+      if (!isFullyBookedDay && slotsForDate.length > 0) {
         const upcomingSlots = slotsForDate.filter(slot => {
           const slotDT = new Date(`${slot.effective_date}T${slot.time}`);
           return slotDT > now;
         });
 
         if (upcomingSlots.length > 0) {
-          // At least 1 future time = available
           isAvailable = true;
         } else {
-          // All times are past = past
           isPast = true;
         }
       }
+
     }
 
     // Background logic  
  
     
     let bgColor = "bg-white";
-    if (isPast) bgColor = "bg-red-300";
-    if (isAvailable) bgColor = "bg-[#FBDC62]";
+    if (isFullyBookedDay) bgColor = "bg-red-300";
+    else if (isPast) bgColor = "bg-red-300";
+    else if (isAvailable) bgColor = "bg-[#FBDC62]";
 
         // clickable only for available
     const clickableClasses = isAvailable
@@ -194,6 +214,7 @@ const renderCalendarDays = () => {
           onClose={() => setShowModal(false)}
           slotsForDate={selectedSlots}
           selectedDate={selectedDate}
+          slot_client={client_slot}
            onSelectSlot={(slot) => {
             setSelectedSlot(slot);
             onAppointmentChange(slot.id); // <-- send value UP to parent

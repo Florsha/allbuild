@@ -210,6 +210,9 @@ export default function Appointment() {
                     Available Slot
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Remaining Slot
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Created By
                 </th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
@@ -223,6 +226,7 @@ export default function Appointment() {
                   <td className="px-6 py-4 text-sm text-gray-700">{item.effective_date}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{item.slot}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">0</td>
                   <td className="px-6 py-4 text-sm text-gray-700">0</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{item.user?.name ?? "No User"}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">     

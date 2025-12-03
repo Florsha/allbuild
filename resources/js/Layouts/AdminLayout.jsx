@@ -5,6 +5,7 @@ import {
   RectangleGroupIcon,
   ArrowLeftOnRectangleIcon,
   CalendarDaysIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 
 export default function AdminLayout({ header, children }) {
@@ -35,6 +36,10 @@ export default function AdminLayout({ header, children }) {
             <span>Manage Appointment</span>
           </NavLink>
           <br />
+          <NavLink href='#' className="flex items-center space-x-2">
+          <UserIcon className="w-5 h-5" />
+          <span>Client Booked Appointment</span>
+        </NavLink>
         </nav>
         <div className="p-4 border-t">
           <Link

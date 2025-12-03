@@ -19,7 +19,7 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { all_services, services_offer, manage_appointment, flash } = usePage().props;
+  const { all_services, services_offer, manage_appointment, flash, client_assign_slot } = usePage().props;
   const [showFlash, setShowFlash] = useState(!!flash?.success);
   const [formData, setFormData] = useState({
     services_id: null,
@@ -329,7 +329,7 @@ export default function Services() {
                        setFormData(prev => ({ ...prev, file: val }))
                     }
                   />}
-                  {step === 3 && <Appointment manageAppointments={manage_appointment}
+                  {step === 3 && <Appointment client_slot={client_assign_slot} manageAppointments={manage_appointment}
                     onAppointmentChange={(val) =>
                       setFormData(prev => ({ ...prev, appointment: val }))
                     }
