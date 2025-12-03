@@ -7,6 +7,7 @@ import {
   CalendarDaysIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
+import { VideoIcon } from 'lucide-react';
 
 export default function AdminLayout({ header, children }) {
   const user = usePage().props.auth.user;
@@ -37,9 +38,13 @@ export default function AdminLayout({ header, children }) {
           </NavLink>
           <br />
           <NavLink href='#' className="flex items-center space-x-2">
-          <UserIcon className="w-5 h-5" />
-          <span>Client Booked Appointment</span>
-        </NavLink>
+            <UserIcon className="w-5 h-5" />
+            <span>Client Booked Appointment</span>
+          </NavLink>
+          <NavLink href={route('manage.video')} className="flex items-center space-x-2">
+            <VideoIcon className="w-5 h-5" />
+            <span> Manage Video Testimonials</span>
+          </NavLink> <br />
         </nav>
         <div className="p-4 border-t">
           <Link

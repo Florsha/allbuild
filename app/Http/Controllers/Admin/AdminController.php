@@ -78,4 +78,11 @@ class AdminController extends Controller
         return response()->json($slots);
 
     }
+
+    public function manageVideo(Request $request): Response
+    {
+        return Inertia::render('Admin/ManageVideo', [
+            //
+        ]);
+    }
 }
