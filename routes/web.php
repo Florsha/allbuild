@@ -72,6 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         //client Booked
         Route::get('admin/clientBooked', [AdminController::class, 'ClientBookedAppointment'])->name('appointment.clientBooked');
+        Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
 
     });
     

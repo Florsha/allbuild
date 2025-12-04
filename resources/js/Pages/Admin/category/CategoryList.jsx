@@ -82,6 +82,7 @@ export default function CategoryList({ categories }) {
     formData.append("title", editForm.data.title);
     formData.append("description", editForm.data.description);
     formData.append("details", editForm.data.details);
+    formData.append("_method", "PUT");  // REQUIRED
     if (editForm.data.image instanceof File) {
       formData.append("image", editForm.data.image);
     }
@@ -206,12 +207,12 @@ export default function CategoryList({ categories }) {
                     >
                       Edit
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => handleDelete(category)}
                       className="text-red-600 hover:text-red-800 font-semibold"
                     >
                       Delete
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}
