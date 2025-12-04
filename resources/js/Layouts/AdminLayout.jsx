@@ -11,6 +11,18 @@ import {
 export default function AdminLayout({ header, children }) {
   const user = usePage().props.auth.user;
 
+  const routeName = route().current(); // gets current route name
+
+    const headers = {
+      dashboard: "Dashboard",
+      categoryList: "Category",
+      "admin.subcateg": "Sub Category",
+      "manage.appointment": "Manage Appointment",
+      "appointment.clientBooked": "Client Requests",
+    };
+
+    const computedHeader = headers[routeName] ?? header;
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -36,9 +48,9 @@ export default function AdminLayout({ header, children }) {
             <span>Manage Appointment</span>
           </NavLink>
           <br />
-          <NavLink href='#' className="flex items-center space-x-2">
+          <NavLink href={route('appointment.clientBooked')} className="flex items-center space-x-2">
           <UserIcon className="w-5 h-5" />
-          <span>Client Booked Appointment</span>
+          <span>Client Requests</span>
         </NavLink>
         </nav>
         <div className="p-4 border-t">
@@ -58,7 +70,7 @@ export default function AdminLayout({ header, children }) {
       <div className="flex-1 flex flex-col">
         <header className="flex justify-between items-center bg-white shadow px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-800">
-            {header || 'Category'}
+            {computedHeader}
           </h2>
           <div className="flex items-center space-x-3">
             <img

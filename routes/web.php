@@ -70,6 +70,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('admin/appointment/slot/{date}', [AdminController::class, 'getSlotsByDate'])->name('appointment.slots.byDate');
 
+        //client Booked
+        Route::get('admin/clientBooked', [AdminController::class, 'ClientBookedAppointment'])->name('appointment.clientBooked');
+
     });
     
 

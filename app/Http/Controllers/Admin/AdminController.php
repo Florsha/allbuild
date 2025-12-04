@@ -20,7 +20,7 @@ class AdminController extends Controller
             ->paginate(10)
             ->withQueryString(); // Keep query parameters when navigating pages
 
-        return Inertia::render('Admin/manageAppointment.jsx/appointment', [
+        return Inertia::render('Admin/manageAppointment/appointment', [
             'appointments' => $manage_appointment
         ]);
     }
@@ -43,6 +43,13 @@ class AdminController extends Controller
     
           return redirect()->route('manage.appointment')
             ->with('success', 'Appointment slots saved!');
+    }
+    
+    // C:\xampp8.2\htdocs\allbuild\resources\js\Pages\Admin\manageAppointment\client_booked.jsx
+    public function ClientBookedAppointment(Request $request): Response
+    {
+
+        return Inertia::render('Admin/manageAppointment/client_booked');
     }
 
     public function updateAppointment(Request $request, ManageAppointment $appointment){
