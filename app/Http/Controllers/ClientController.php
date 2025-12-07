@@ -10,6 +10,7 @@ use App\Models\subcategory;
 use App\Models\ManageAppointment;
 use App\Models\ClientRequest;
 use App\Models\ClientAssign;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -53,6 +54,8 @@ class ClientController extends Controller
 
         ClientRequest::create([
             'services_id' => $validated['services_id'],
+            'reference_number' => 'REF-' . substr(str_replace('-', '', Str::uuid()), 0, 10),
+            'status' => 'pending',
             'subcategory_id' => $validated['category'],
             'client_assign_id' => $clientAssign->id,
             'project_description' => $validated['description'],
