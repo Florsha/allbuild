@@ -16,6 +16,9 @@ export default function ClientBooked() {
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                          Reference Number
+                        </th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           Full Name
                         </th>
                         <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
@@ -41,6 +44,7 @@ export default function ClientBooked() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       
                         <tr className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 text-sm text-gray-700"></td>
                           <td className="px-6 py-4 text-sm text-gray-700"></td>
                           <td className="px-6 py-4 text-sm text-gray-700"></td>
                           <td className="px-6 py-4 text-sm text-gray-700"></td>

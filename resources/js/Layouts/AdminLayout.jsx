@@ -53,10 +53,6 @@ export default function AdminLayout({ header, children }) {
           <UserIcon className="w-5 h-5" />
           <span>Client Requests</span>
         </NavLink>
-          <NavLink href='#' className="flex items-center space-x-2">
-            <UserIcon className="w-5 h-5" />
-            <span>Client Booked Appointment</span>
-          </NavLink>
           <NavLink href={route('manage.video')} className="flex items-center space-x-2">
             <VideoIcon className="w-5 h-5" />
             <span> Manage Video Testimonials</span>
