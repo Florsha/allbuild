@@ -66,11 +66,11 @@ class AdminController extends Controller
             'clientAssign.appointment.user',
             'servicesOffer',
             'subCategory'
-        ])->get();
+        ])->latest()->paginate(10);
 
-        return $clientRequest;
-
-        return Inertia::render('Admin/manageAppointment/client_booked');
+        return Inertia::render('Admin/manageAppointment/client_booked',[
+            "clientBooked" => $clientRequest,
+        ]);
     }
 
     public function updateAppointment(Request $request, ManageAppointment $appointment){
