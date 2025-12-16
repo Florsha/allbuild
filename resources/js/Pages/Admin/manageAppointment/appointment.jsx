@@ -28,9 +28,58 @@ export default function Appointment() {
       ])
     }
 
-    const updateSlot = (index, key, value) => {
+    const updateSlot = async (index, key, value) => {
       const updatedSlots = [...addForm.data.timeslots];
       updatedSlots[index][key] = value;
+
+      let duplicate = false;
+      console.log("updatedSlots", updatedSlots);
+      updatedSlots.forEach((slot, i) => {
+        if (i !== index) {
+            // Check duplicate time
+            if (key === "time" && slot.time === value) {
+                duplicate = true;
+            }
+        }
+      });
+
+      if (duplicate) {
+        Swal.fire({
+            icon: "error",
+            title: "Duplicate Detected",
+            text: `You already used this ${key}. Please choose another.`,
+        });
+
+        // Clear the duplicated field
+        updatedSlots[index][key] = "";
+      }
+      
+      const date = addForm.data.date;
+
+      if (key === "time" && date && value) {
+          try {
+             const response = await axios.post(route('appointment.checkDuplicate'), {
+              date: date,
+              time: value,
+              // slot: updatedSlots[index].slot   // uncomment if slot must also be validated
+            });
+
+             if (response.data.exists) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Slot Already Exists",
+                  text: `The time ${value} is already used on ${date}.`,
+                });
+                updatedSlots[index][key] = "";
+                addForm.setData("timeslots", updatedSlots);
+                return;
+             }
+          } 
+          catch (error) {
+            console.error("Duplicate check failed", error);
+          }
+      }
+
       addForm.setData("timeslots", updatedSlots);
     }
 
@@ -39,9 +88,16 @@ export default function Appointment() {
       addForm.setData("timeslots", updatedSlots);
     }
 
+    const isSubmitDisabled = () => {
+      if (!addForm.data.date) return true; // also disable if date is empty
+
+      return addForm.data.timeslots.some((s) => s.time === "" || s.slot === "");
+    };
+
     const handleAdd = (e) =>{
       e.preventDefault();
       console.log("appointment form", addForm);
+
       addForm.post(route('appointment.store'), {
         onSuccess: () => {
           closeAddModal();
@@ -83,38 +139,41 @@ export default function Appointment() {
       return false;
     }
 
-    const UpdateaddNewSlot = () => {
-      // editAppointment.setData("timeslots", [
-      //   ...editAppointment.data.timeslots,
-      //   { time: "", slot: "" },
-      // ])
+   const UpdateaddNewSlot = () => {
+      const timeslots = [
+        ...editAppointment.data.timeslots,
+        { id: null, time: "", slot: "" }
+      ];
 
-      const timeslots = [...editAppointment.data.timeslots, { time: "", slot: "" }];
-      console.log("timeslots::", timeslots);
-        if(hasDuplicateSlots(timeslots)){
-           Swal.fire({
-            icon: "error",
-            title: "Duplicate Slot",
-            text: "You have duplicate time/slot entries. Please fix before adding a new one.",
-          });
-          return;
-        }
+      if (hasDuplicateSlots(timeslots)) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Slot",
+          text: "Duplicate time & slot not allowed.",
+        });
+        return;
+      }
 
-        editAppointment.setData("timeslots", timeslots);
-    }
+      editAppointment.setData("timeslots", timeslots);
+    };
 
-    const handleTimeSlotChange = (index, field, value) => {
+    const UpdateremoveSlot = (index) => {
+        const updated = [...editAppointment.data.timeslots];
+        updated.splice(index, 1);
+        editAppointment.setData("timeslots", updated);
+    };
+
+   const handleTimeSlotChange = (index, field, value) => {
       const updated = [...editAppointment.data.timeslots];
       updated[index][field] = value;
 
-      // Check duplicates
       if (hasDuplicateSlots(updated)) {
         Swal.fire({
           icon: "error",
           title: "Duplicate Slot Detected",
-          text: "You cannot use the same time and slot combination in multiple entries.",
+          text: "You cannot use the same time and slot in multiple entries.",
         });
-        return; // prevent setting duplicate
+        return;
       }
 
       editAppointment.setData("timeslots", updated);
@@ -122,8 +181,10 @@ export default function Appointment() {
 
     const handleAppointmentUpdate = (e) =>{
       e.preventDefault();
-
-      editAppointment.put(route("admin.appointment.edit", editAppointment.data.id), {
+      console.log("Id ", editAppointment.data);
+      
+      editAppointment.put(
+        route("admin.appointment.edit", editAppointment.data), {
         onSuccess: () => {  
         closeEditAppointment();
            Swal.fire({
@@ -235,6 +296,10 @@ export default function Appointment() {
                         className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
                         Edit
                     </button>
+                      <button 
+                        className="text-red-600 hover:text-blue-800 font-semibold mr-3">
+                        Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -336,8 +401,9 @@ export default function Appointment() {
           </button>
           <button
             type="submit"
-            disabled={addForm.processing}
-            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all"
+            disabled={addForm.processing || isSubmitDisabled()}
+            className={`px-4 py-2 rounded-xl text-white font-semibold transition-all 
+              ${isSubmitDisabled() ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
           >
             {addForm.processing ? "Saving..." : "Create"}
           </button>
@@ -400,7 +466,7 @@ export default function Appointment() {
                   {editAppointment.data.timeslots.length > 1 && (
                   <button
                     type="button"
-                    onClick={() => removeSlot(index)}
+                    onClick={() => UpdateremoveSlot(index)}
                     className="text-red-500 text-sm mt-2"
                   >
                     Remove

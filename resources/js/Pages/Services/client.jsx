@@ -34,6 +34,8 @@ export default function Services() {
     }
   })
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleCategorySelect = (catId) => {
     console.log("Cat Id", catId);
      setFormData(prev => ({ ...prev, category: catId }));
@@ -144,12 +146,32 @@ export default function Services() {
 
   const handleSubmit = () => {
     console.log("Submitting...", formData);
-
+    
+    setIsSubmitting(true);
     router.post('/services-request', formData, {
       onSuccess: () => {
         setActiveModal(null);
-            console.log("Saved!");
-        }
+            setStep(1);
+            setSelectedCategory(null);
+
+            setFormData({
+              services_id: null,
+              category: null,
+              description: "",
+              file: null,
+              appointment: null,
+              location: {
+                lat: null,
+                lng: null,
+                address: ""
+              }
+            });
+
+            setIsSubmitting(false);
+        },
+        onError: () => {
+      setIsSubmitting(false); // ❌ HIDE LOADER EVEN ON ERROR
+    }
     })
     
   }
@@ -407,6 +429,19 @@ export default function Services() {
           </div>
       )}
 
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            {/* Spinner */}
+            <div className="w-14 h-14 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+
+            {/* Text */}
+            <p className="text-white text-lg font-semibold">
+              Submitting request...
+            </p>
+          </div>
+        </div>
+      )}
 
     </AuthenticatedLayout>
   );

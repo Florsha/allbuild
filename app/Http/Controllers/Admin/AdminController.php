@@ -8,6 +8,7 @@ use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use App\Models\ManageAppointment;
+use App\Models\ClientRequest;
 
 class AdminController extends Controller
 {
@@ -44,17 +45,37 @@ class AdminController extends Controller
           return redirect()->route('manage.appointment')
             ->with('success', 'Appointment slots saved!');
     }
+
+    public function checkDuplicate(Request $request){
+
+        $exists = ManageAppointment::where('effective_date', $request->date)
+            ->where('time', $request->time)
+            ->exists();
+
+        return response()->json([
+            'exists' => $exists
+        ]);
+
+    }
     
     // C:\xampp8.2\htdocs\allbuild\resources\js\Pages\Admin\manageAppointment\client_booked.jsx
     public function ClientBookedAppointment(Request $request): Response
     {
+        $clientRequest = ClientRequest::with([
+            'clientAssign.client',
+            'clientAssign.appointment.user',
+            'servicesOffer',
+            'subCategory'
+        ])->get();
+
+        return $clientRequest;
 
         return Inertia::render('Admin/manageAppointment/client_booked');
     }
 
     public function updateAppointment(Request $request, ManageAppointment $appointment){
         $user = auth()->user();
-        
+        dd($request->all());
         $request->merge([
             'effective_date' =>  $request->appointment_date,
             'time' => substr($request->timeslots[0]['time'], 0, 5), 
@@ -72,7 +93,6 @@ class AdminController extends Controller
         $appointment->update($validated);
 
         return redirect()->route('manage.appointment')->with('success', 'Appointment updated');
-        // return back()->with('success', 'Appointment updated successfully.');
 
     }
 
