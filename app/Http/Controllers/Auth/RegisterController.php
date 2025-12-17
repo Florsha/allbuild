@@ -26,7 +26,7 @@ class RegisterController extends Controller
             'address' => ['nullable', 'string', 'max:255'],
             'preferred_contact_method' => ['nullable', 'string', 'max:255'],
             'company_or_organization' => ['nullable', 'string', 'max:255'],
-            'role' => ['nullable', 'string', 'max:255'],
+            // 'role' => ['nullable', 'string', 'max:255'],
             'terms_and_condition_concent' => ['required', 'boolean'],
         ]);
 
@@ -47,12 +47,12 @@ class RegisterController extends Controller
             'address' => $request->address,
             'preferred_contact_method' => $request->preferred_contact_method,
             'company_or_organization' => $request->company_or_organization,
-            'role' => $request->role,
+            'role' => '2',
             'terms_and_condition_concent' => $request->terms_and_condition_concent,
         ]);
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', false));
     }
 }

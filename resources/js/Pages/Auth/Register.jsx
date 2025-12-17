@@ -203,7 +203,7 @@ export default function Register() {
                 </div>
 
                 {/* Role */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                     <InputLabel htmlFor="role" value="Role" />
                     <TextInput
                         id="role"
@@ -213,7 +213,7 @@ export default function Register() {
                         onChange={(e) => setData('role', e.target.value)}
                     />
                     <InputError message={errors.role} className="mt-2" />
-                </div>
+                </div> */}
 
                 {/* Terms and Condition Consent */}
                 <div className="mt-4 flex items-center">
