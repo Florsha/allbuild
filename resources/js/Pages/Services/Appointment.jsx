@@ -118,7 +118,7 @@ const renderCalendarDays = () => {
     let bgColor = "bg-white";
     if (isFullyBookedDay) bgColor = "bg-red-300";
     else if (isPast) bgColor = "bg-red-300";
-    else if (isAvailable) bgColor = "bg-[#FBDC62]";
+    else if (isAvailable) bgColor = "bg-[#81C784]";
 
         // clickable only for available
     const clickableClasses = isAvailable
@@ -129,7 +129,7 @@ const renderCalendarDays = () => {
       <motion.div
         key={i}
         onClick={() => isAvailable && handleSelectDate(fullDate)}
-        className={`min-h-32 border border-gray-200 p-2 ${bgColor} ${clickableClasses}`}
+        className={`border border-gray-200 p-1 sm:p-2 h-[60px] sm:h-[80px] md:h-[100px] text-xs sm:text-sm ${bgColor} ${clickableClasses}`}
         whileHover={isAvailable ? { scale: 1.03 } : {}}
       >
         {isValidDay && (

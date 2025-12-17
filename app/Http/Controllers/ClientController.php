@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendClientBookingInfoJob;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -52,7 +53,7 @@ class ClientController extends Controller
             'client_id' => $user->id
         ]);
 
-        ClientRequest::create([
+        $clientRequest = ClientRequest::create([
             'services_id' => $validated['services_id'],
             'reference_number' => 'REF-' . substr(str_replace('-', '', Str::uuid()), 0, 10),
             'status' => 'pending',
@@ -64,6 +65,22 @@ class ClientController extends Controller
             'longitude' => $validated['location']['lng']
         ]);
         
+        SendClientBookingInfoJob::dispatch($clientRequest->id);
+
          return redirect()->route('services')->with('success', 'Appointment Submitted');
+    }
+
+    public function TestClient(){
+
+        $clientRequestId = 25;
+
+        $clientRequest = ClientRequest::with([
+        'clientAssign.client',
+        'clientAssign.appointment.user',
+        'servicesOffer',
+        'subCategory'
+            ])->find($clientRequestId);
+
+        return $clientRequest;
     }
 }

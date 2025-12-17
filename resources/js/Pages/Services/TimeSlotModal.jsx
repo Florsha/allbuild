@@ -44,7 +44,7 @@ export default function TimeSlotModal({ open, onClose, slotsForDate, selectedDat
                 const bookedCount = slot_client.filter(
                   s => s.appointment_id === slot.id
                 ).length;
-
+                
                 // Available capacity
                 const remaining = slot.slot - bookedCount;
 

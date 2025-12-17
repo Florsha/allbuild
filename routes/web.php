@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/services', [ClientController::class, 'client'])->name('services');
 
         Route::post('/services-request', [ClientController::class, 'StoreClientRequest'])->name('services.request.store');
+
+        Route::get('/getclientData', [ClientController::class, 'TestClient']);
     });
 
     Route::middleware('role:1')->group(function () {
@@ -66,7 +68,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //appointment
         Route::get('admin/appointment', [AdminController::class, 'manageappointment'])->name('manage.appointment');
         Route::post('/admin/store/appointment', [AdminController::class, 'storeAppoitment'])->name('appointment.store');
-        Route::put('/admin/appointment/update/{appointment}', [AdminController::class, 'updateAppointment'])->name('admin.appointment.edit');
+        Route::put('/admin/update/{appointment}', [AdminController::class, 'updateAppointment'])->name('admin.appointment.edit');
+        Route::post('/appointment/check-duplicate', [AdminController::class, 'checkDuplicate'])->name('appointment.checkDuplicate');
+
 
         Route::get('admin/appointment/slot/{date}', [AdminController::class, 'getSlotsByDate'])->name('appointment.slots.byDate');
 
