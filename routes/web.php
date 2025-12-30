@@ -70,6 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/store/appointment', [AdminController::class, 'storeAppoitment'])->name('appointment.store');
         Route::put('/admin/update/{appointment}', [AdminController::class, 'updateAppointment'])->name('admin.appointment.edit');
         Route::post('/appointment/check-duplicate', [AdminController::class, 'checkDuplicate'])->name('appointment.checkDuplicate');
+        Route::get('/CheckAppointment/exists/{appointmentId}', [AdminController::class, 'CheckAppointmentExists'])->name('CheckAppointment.exists');
+        route::delete('appointment/delete/{appointmentId}', [AdminController::class, 'DeleteSlot'])->name('appointment.delete');
 
 
         Route::get('admin/appointment/slot/{date}', [AdminController::class, 'getSlotsByDate'])->name('appointment.slots.byDate');

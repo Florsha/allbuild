@@ -127,7 +127,7 @@ export default function ClientBooked() {
                           <td className="px-6 py-4 text-sm text-gray-700">{item.sub_category.title}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{new Date(
-                            `${item.client_assign.appointment.effective_date} ${item.client_assign.appointment.time}`
+                            `${item.client_assign.appointment?.effective_date} ${item.client_assign.appointment?.time}`
                               ).toLocaleString("en-PH", {
                                 month: "long",
                                 day: "2-digit",

@@ -1,11 +1,13 @@
 import NavLink from '@/Components/NavLink';
+import { useState } from "react";
 import { Link, usePage } from '@inertiajs/react';
 import {
   HomeIcon,
   RectangleGroupIcon,
   ArrowLeftOnRectangleIcon,
   CalendarDaysIcon,
-  UserIcon
+  UserIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline';
 import { VideoIcon } from 'lucide-react';
 
@@ -23,6 +25,8 @@ export default function AdminLayout({ header, children }) {
     };
 
     const computedHeader = headers[routeName] ?? header;
+
+    const [appointmentDropdownOpen, setAppointmentDropdownOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -44,11 +48,33 @@ export default function AdminLayout({ header, children }) {
             <RectangleGroupIcon className="w-5 h-5" />
             <span>Sub Category</span>
           </NavLink> <br />
-          <NavLink href={route('manage.appointment')} className="flex items-center space-x-2">
-            <CalendarDaysIcon className="w-5 h-5" />
-            <span>Manage Appointment</span>
-          </NavLink>
-          <br />
+           {/* Manage Appointment Dropdown */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setAppointmentDropdownOpen(!appointmentDropdownOpen)}
+              className="flex items-center space-x-2 w-full text-left"
+            >
+              <CalendarDaysIcon className="w-5 h-5" />
+              <span>Manage Appointment</span>
+            </button>
+
+            {appointmentDropdownOpen && (
+              <div className="ml-6 mt-2 flex flex-col space-y-1">
+                {/* Upcoming Appointments */}
+                <NavLink href={route('manage.appointment', { type: 'upcoming'})} className="flex items-center space-x-2">
+                  <CalendarDaysIcon className="w-4 h-4 text-gray-600" />
+                  <span>Upcoming Appointments</span>
+                </NavLink>
+
+                {/* Past Appointments */}
+                <NavLink href={route('manage.appointment', { type: 'past' })} className="flex items-center space-x-2">
+                  <ClockIcon className="w-4 h-4 text-gray-600" />
+                  <span>Past Appointments</span>
+                </NavLink>
+              </div>
+            )}
+          </div>
           <NavLink href={route('appointment.clientBooked')} className="flex items-center space-x-2">
           <UserIcon className="w-5 h-5" />
           <span>Client Requests</span>
