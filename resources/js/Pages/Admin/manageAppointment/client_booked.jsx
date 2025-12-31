@@ -77,7 +77,7 @@ export default function ClientBooked() {
                 
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-gray-700">
-                  Client Booked Appointments
+                  Client Pending Requests
                 </h2>
 
                 <input

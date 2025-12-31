@@ -121,7 +121,9 @@ class AdminController extends Controller
             'clientAssign.appointment.user',
             'servicesOffer',
             'subCategory'
-        ])->latest()->paginate(10);
+        ])
+        ->where('status','pending')
+        ->latest()->paginate(10);
 
         return Inertia::render('Admin/manageAppointment/client_booked',[
             "clientBooked" => $clientRequest,
