@@ -293,37 +293,43 @@ console.log("type", requestType);
                   >
                     Close
                   </button>
-
                   {/* STATUS ACTIONS */}
                   <div className="flex w-full sm:w-auto flex-wrap gap-3">
-                    <button
-                      onClick={() => confirmStatusUpdate("accepted")}
-                      className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Accepted
-                    </button>
+                    {requestType === "pending" ? (
+                      <>
+                        <button
+                          onClick={() => confirmStatusUpdate("accepted")}
+                          className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Accepted
+                        </button>
 
-                    <button
-                      onClick={() => confirmStatusUpdate("approved")}
-                      className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Approved
-                    </button>
+                        <button
+                          onClick={() => confirmStatusUpdate("rejected")}
+                          className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Rejected
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => confirmStatusUpdate("approved")}
+                          className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Approved
+                        </button>
 
-                    <button
-                      onClick={() => confirmStatusUpdate("completed")}
-                      className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Completed
-                    </button>
-
-                    <button
-                      onClick={() => confirmStatusUpdate("rejected")}
-                      className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Rejected
-                    </button>
+                        <button
+                          onClick={() => confirmStatusUpdate("completed")}
+                          className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Completed
+                        </button>
+                      </>
+                    )}
                   </div>
+
                 </div>
               </div>
 
