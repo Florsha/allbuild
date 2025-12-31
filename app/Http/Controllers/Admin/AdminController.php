@@ -116,17 +116,20 @@ class AdminController extends Controller
     // C:\xampp8.2\htdocs\allbuild\resources\js\Pages\Admin\manageAppointment\client_booked.jsx
     public function ClientBookedAppointment(Request $request): Response
     {
+        $type = $request->query('type'); 
+       
         $clientRequest = ClientRequest::with([
             'clientAssign.client',
             'clientAssign.appointment.user',
             'servicesOffer',
             'subCategory'
         ])
-        ->where('status','pending')
+        ->where('status', $type)
         ->latest()->paginate(10);
 
         return Inertia::render('Admin/manageAppointment/client_booked',[
             "clientBooked" => $clientRequest,
+            "requestType" => $type
         ]);
     }
 

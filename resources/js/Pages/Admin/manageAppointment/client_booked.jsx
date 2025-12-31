@@ -4,12 +4,17 @@ import { useState, useMemo } from "react";
 import Swal from 'sweetalert2';
 
 export default function ClientBooked() {
-    const {clientBooked } = usePage().props;
+    const {clientBooked, requestType } = usePage().props;
     const [search, setSearch] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
+console.log("type", requestType);
 
+  const filterType = 
+      requestType === "pending"
+      ? "Client Pending Requests"
+      : "Client Updated Status"
     const openModal = (item) => {
       setSelectedClient(item);
       setShowModal(true);
@@ -76,9 +81,9 @@ export default function ClientBooked() {
               <div className="max-w-full mx-auto py-10 px-6"> {/* made full width */}
                 
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-700">
-                  Client Pending Requests
-                </h2>
+                <h1 className="text-3xl font-bold text-gray-800">
+                  {filterType}
+                </h1>
 
                 <input
                   type="text"
