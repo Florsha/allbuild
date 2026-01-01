@@ -4,12 +4,17 @@ import { useState, useMemo } from "react";
 import Swal from 'sweetalert2';
 
 export default function ClientBooked() {
-    const {clientBooked } = usePage().props;
+    const {clientBooked, requestType } = usePage().props;
     const [search, setSearch] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
+console.log("type", requestType);
 
+  const filterType = 
+      requestType === "pending"
+      ? "Client Pending Requests"
+      : "Client Updated Status"
     const openModal = (item) => {
       setSelectedClient(item);
       setShowModal(true);
@@ -76,9 +81,9 @@ export default function ClientBooked() {
               <div className="max-w-full mx-auto py-10 px-6"> {/* made full width */}
                 
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-700">
-                  Client Booked Appointments
-                </h2>
+                <h1 className="text-3xl font-bold text-gray-800">
+                  {filterType}
+                </h1>
 
                 <input
                   type="text"
@@ -127,7 +132,7 @@ export default function ClientBooked() {
                           <td className="px-6 py-4 text-sm text-gray-700">{item.sub_category?.title}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{new Date(
-                            `${item.client_assign.appointment.effective_date} ${item.client_assign.appointment.time}`
+                            `${item.client_assign.appointment?.effective_date} ${item.client_assign.appointment?.time}`
                               ).toLocaleString("en-PH", {
                                 month: "long",
                                 day: "2-digit",
@@ -288,37 +293,43 @@ export default function ClientBooked() {
                   >
                     Close
                   </button>
-
                   {/* STATUS ACTIONS */}
                   <div className="flex w-full sm:w-auto flex-wrap gap-3">
-                    <button
-                      onClick={() => confirmStatusUpdate("accepted")}
-                      className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Accepted
-                    </button>
+                    {requestType === "pending" ? (
+                      <>
+                        <button
+                          onClick={() => confirmStatusUpdate("accepted")}
+                          className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Accepted
+                        </button>
 
-                    <button
-                      onClick={() => confirmStatusUpdate("approved")}
-                      className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Approved
-                    </button>
+                        <button
+                          onClick={() => confirmStatusUpdate("rejected")}
+                          className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Rejected
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => confirmStatusUpdate("approved")}
+                          className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Approved
+                        </button>
 
-                    <button
-                      onClick={() => confirmStatusUpdate("completed")}
-                      className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Completed
-                    </button>
-
-                    <button
-                      onClick={() => confirmStatusUpdate("rejected")}
-                      className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
-                    >
-                      Rejected
-                    </button>
+                        <button
+                          onClick={() => confirmStatusUpdate("completed")}
+                          className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Completed
+                        </button>
+                      </>
+                    )}
                   </div>
+
                 </div>
               </div>
 

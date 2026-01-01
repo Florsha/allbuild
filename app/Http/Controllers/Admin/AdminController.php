@@ -9,6 +9,8 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use App\Models\ManageAppointment;
 use App\Models\ClientRequest;
+use App\Models\ClientAssign;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -16,13 +18,51 @@ class AdminController extends Controller
 
     public function manageappointment(Request $request): Response
     {
-        $manage_appointment = ManageAppointment::with('user:id,name')
-            ->orderBy('id', 'desc')
+        $user = auth()->user();
+        $type = $request->query('type', 'upcoming');
+
+        $now = Carbon::now();
+        $today = $now->toDateString();  // YYYY-MM-DD
+        $currentTime = $now->format('H:i');
+
+        $client_booked = ClientAssign::select('appointment_id')->get();
+    
+        $query = ManageAppointment::with('user:id,name');
+
+        if($type === 'past'){
+            $query->where(function ($q) use ($today, $currentTime){
+                $q->whereDate('effective_date', '<', $today)
+                    ->orWhere(function ($q2) use ($today, $currentTime){
+                        $q2->whereDate('effective_date', $today)
+                            ->where('time', '<', $currentTime);
+                    });
+            });
+
+             $query->orderBy('effective_date', 'desc')
+              ->orderBy('time', 'desc');
+        }else{
+
+            $query->where(function ($q) use ($today, $currentTime) {
+                $q->whereDate('effective_date', '>', $today)
+                ->orWhere(function ($q2) use ($today, $currentTime) {
+                    $q2->whereDate('effective_date', $today)
+                        ->where('time', '>=', $currentTime);
+                });
+            });
+
+            $query->where('created_by', $user->id)
+                ->orderBy('effective_date', 'asc')
+                ->orderBy('time', 'asc');
+        }
+
+        $manage_appointment = $query
             ->paginate(10)
-            ->withQueryString(); // Keep query parameters when navigating pages
+            ->withQueryString();
 
         return Inertia::render('Admin/manageAppointment/appointment', [
-            'appointments' => $manage_appointment
+            'appointments' => $manage_appointment,
+            'filtertype' => $type,
+            'client_booked' => $client_booked
         ]);
     }
 
@@ -57,43 +97,85 @@ class AdminController extends Controller
         ]);
 
     }
+
+    public function CheckAppointmentExists($id){
+
+        $appointmentId_exists = ClientAssign::where('appointment_id',$id)->exists();
+        return response()->json([
+            'exists' => $appointmentId_exists 
+        ]);
+
+    }
+
+    public function DeleteSlot($id){
+        $appointment = ManageAppointment::findOrFail($id);
+        $appointment->delete();
+            
+    }
     
     // C:\xampp8.2\htdocs\allbuild\resources\js\Pages\Admin\manageAppointment\client_booked.jsx
     public function ClientBookedAppointment(Request $request): Response
     {
+        $type = $request->query('type'); 
+       
         $clientRequest = ClientRequest::with([
             'clientAssign.client',
             'clientAssign.appointment.user',
             'servicesOffer',
             'subCategory'
-        ])->latest()->paginate(10);
+        ])
+        ->where('status', $type)
+        ->latest()->paginate(10);
 
         return Inertia::render('Admin/manageAppointment/client_booked',[
             "clientBooked" => $clientRequest,
+            "requestType" => $type
         ]);
     }
 
-    public function updateAppointment(Request $request, ManageAppointment $appointment){
+    public function updateAppointment(Request $request, ManageAppointment $appointment)
+    {
         $user = auth()->user();
-        dd($request->all());
-        $request->merge([
-            'effective_date' =>  $request->appointment_date,
-            'time' => substr($request->timeslots[0]['time'], 0, 5), 
-            'slot' => $request->timeslots[0]['slot'],
-            'created_by' => $user->id
+
+        $request->validate([
+            'appointment_date'      => 'required|date',
+            'timeslots'             => 'required|array',
+            // 'timeslots.*.time'      => 'required|date_format:H:i',
+            'timeslots.*.slot'      => 'required|integer',
+            'timeslots.*.id'        => 'nullable|integer',
         ]);
 
-          $validated = $request->validate([
-           'effective_date' => 'required|date',     // date
-            'time'          => 'required|date_format:H:i', // time (HH:MM)
-            'slot'          => 'required|integer',   // integer
-            'created_by'    => 'required|integer',   // integer
+        // Update appointment main data
+        $appointment->update([
+            'effective_date' => $request->appointment_date,
+            'created_by'     => $user->id,
         ]);
 
-        $appointment->update($validated);
+        foreach ($request->timeslots as $slot) {
 
-        return redirect()->route('manage.appointment')->with('success', 'Appointment updated');
+            // 🔹 UPDATE existing slot
+            if (!empty($slot['id'])) {
+                ManageAppointment::where('id', $slot['id'])
+                    ->update([
+                        'time'       => substr($slot['time'], 0, 5),
+                        'slot'       => $slot['slot'],
+                        'created_by' => $user->id,
+                    ]);
 
+            // 🔹 CREATE new slot
+            } else {
+                ManageAppointment::create([
+                    'effective_date' => $request->appointment_date,
+                    'time'       => substr($slot['time'], 0, 5),
+                    'slot'       => $slot['slot'],
+                    'created_by' => $user->id,
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('manage.appointment')
+            ->with('success', 'Appointment and slots updated successfully');
     }
 
     public function getSlotsByDate($date){

@@ -5,9 +5,17 @@ import Swal from 'sweetalert2';
 
 export default function Appointment() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [IsEditAppointment, setIsEditAppointment] = useState(false);
-  const { flash, appointments } = usePage().props;
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+  const [IsEditAppointment, setIsEditAppointment] = useState(false);
+  const { flash, appointments, filtertype, client_booked } = usePage().props;
+  // console.log("client_booked", client_booked);
+    const pageTitle = 
+      filtertype === "past"
+      ? "Past Appointment"
+      : "Upcoming Appointment"
     //Add Appointment Side
     const addForm = useForm({
           date: "",
@@ -130,12 +138,20 @@ export default function Appointment() {
 
     const hasDuplicateSlots = (timeSlots) => {
       const seen = new Set();
+      console.log("my", timeSlots);
+      for (const slot of timeSlots) {
+        // Ignore empty rows
+        if (!slot.time) continue;
 
-      for (let slot of timeSlots) {
-        const key = `${slot.time}-${slot.slot}`; // unique combination
-        if (seen.has(key)) return true;
+        const key = `${slot.time}`;
+
+        if (seen.has(key)) {
+          return true;
+        }
+
         seen.add(key);
       }
+
       return false;
     }
 
@@ -144,6 +160,8 @@ export default function Appointment() {
         ...editAppointment.data.timeslots,
         { id: null, time: "", slot: "" }
       ];
+
+      console.log("my time Slot", timeslots);
 
       if (hasDuplicateSlots(timeslots)) {
         Swal.fire({
@@ -165,7 +183,15 @@ export default function Appointment() {
 
    const handleTimeSlotChange = (index, field, value) => {
       const updated = [...editAppointment.data.timeslots];
-      updated[index][field] = value;
+      // updated[index][field] = value;
+
+      if (field === "time" && !value.includes(":")) {
+          updated[index][field] = value + ":00";
+        } else if (field === "time") {
+          updated[index][field] = value.length === 5 ? value + ":00" : value;
+        } else {
+          updated[index][field] = value;
+        }
 
       if (hasDuplicateSlots(updated)) {
         Swal.fire({
@@ -184,7 +210,7 @@ export default function Appointment() {
       console.log("Id ", editAppointment.data);
       
       editAppointment.put(
-        route("admin.appointment.edit", editAppointment.data), {
+        route("admin.appointment.edit", editAppointment.data.appointmentId), {
         onSuccess: () => {  
         closeEditAppointment();
            Swal.fire({
@@ -205,8 +231,9 @@ export default function Appointment() {
       })
     }
 
-    const openEditAppointment = async (appointment) => {
 
+    const openEditAppointment = async (appointment) => {
+      console.log("update")
       const response = await axios.get(
           route("appointment.slots.byDate", appointment.effective_date)
       );
@@ -220,6 +247,7 @@ export default function Appointment() {
       }));
 
       editAppointment.setData({
+        appointmentId: appointment.id,
         appointment_date: appointment.effective_date,
 
         timeslots: formattedSlots,
@@ -230,11 +258,51 @@ export default function Appointment() {
       setIsEditAppointment(true);
     }
 
-    const closeEditAppointment = () => {
-      setIsEditAppointment(false);
-      editAppointment.reset(); // optional but recommended
+    const handleDelete = (appointment) => {
+      axios
+        .get(route("CheckAppointment.exists", appointment.id))
+        .then((response) => {
+          if (response.data.exists) {
+            Swal.fire({
+              icon: "warning",
+              title: "Already Booked",
+              text: "This appointment cannot be deleted because it has already been booked by a client.",
+            });
+            return;
+          }
+
+          setSelectedAppointment(appointment);
+          setIsDeleteModalOpen(true);
+        })
+        .catch(console.error);
     };
 
+  const confirmDelete = () => {
+    if (!selectedAppointment) return;
+
+    router.delete(
+      route('appointment.delete', selectedAppointment.id),
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setSelectedAppointment(null);
+        }
+      }
+    );
+  };
+
+  const closeEditAppointment = () => {
+    setIsEditAppointment(false);
+    editAppointment.reset(); // optional but recommended
+  };
+
+  const getBookedCount = (appointmentId) => {
+    return client_booked.filter(
+      (b) => b.appointment_id === appointmentId
+    ).length;
+  };
+  
   return (
     <AuthenticatedLayout>
       <Head title="Appointment List" />
@@ -243,7 +311,7 @@ export default function Appointment() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Manage Appointment Slots
+            {pageTitle}
           </h1>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -268,7 +336,7 @@ export default function Appointment() {
                   Slot
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Available Slot
+                    Booked Slot
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Remaining Slot
@@ -282,27 +350,47 @@ export default function Appointment() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {appointments.data.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.effective_date}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.slot}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">0</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">0</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.user?.name ?? "No User"}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">     
-                    <button 
-                        onClick={() => openEditAppointment(item)}
-                        className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
-                        Edit
-                    </button>
-                      <button 
-                        className="text-red-600 hover:text-blue-800 font-semibold mr-3">
-                        Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {appointments.data.map((item) => {
+                const booked = getBookedCount(item.id);
+                const remaining = item.slot - booked;
+
+                return (
+                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-700">{item.effective_date}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{item.slot}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{booked}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{remaining}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{item.user?.name ?? "No User"}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700"> 
+                      {filtertype !== 'past' &&(
+                        <>
+                            <button 
+                              onClick={() => openEditAppointment(item)}
+                              className="text-blue-600 hover:text-blue-800 font-semibold mr-3">
+                              Edit
+                          </button>
+                        
+                            <button 
+                              onClick={() => handleDelete(item)}
+                              className="text-red-600 hover:text-blue-800 font-semibold mr-3">
+                              Delete
+                          </button>
+                        </>
+                      )}   
+
+                      {filtertype === 'past' &&(
+                          <button
+                            onClick={() => handleDelete(item)}
+                            className="text-red-600 hover:text-red-800 font-semibold"
+                          >
+                            Delete
+                          </button>
+                      )} 
+                    
+                    </td>
+                  </tr>
+                )})}
             </tbody>
           </table>
           {/* Pagination */}
@@ -413,6 +501,70 @@ export default function Appointment() {
   </form>
 )}
 
+{/* Delete */}
+
+{isDeleteModalOpen && (
+     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fadeIn p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+        {/* Header */}
+         <h2 className="text-2xl font-bold text-gray-800 p-6">
+          Delete Appointment
+        </h2>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+          {/* Effective Date */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Effective Date</label>
+            <input
+              type="date"
+              readOnly
+              value={selectedAppointment?.effective_date || ""}
+              className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+            />
+          </div>
+
+          {/* Time Slots */}
+          <h3 className="text-lg font-semibold mt-4 mb-2">Time Slots</h3>
+          <div className="space-y-4">
+              <div className="p-3 border rounded-xl">
+                <label className="block text-gray-700 font-medium mb-1">Time</label>
+                <input
+                  type="time"
+                  readOnly
+                  value={selectedAppointment?.time || ""}
+                  className="w-full border-gray-300 rounded-xl mb-2 px-4 py-2"
+                />
+
+                <label className="block text-gray-700 font-medium mb-1">Slot</label>
+                <input
+                  type="number"
+                  readOnly
+                  value={selectedAppointment?.slot || ""}
+                  className="w-full border-gray-300 rounded-xl px-4 py-2"
+                />
+              </div>
+          </div>
+        </div>
+
+        {/* Modal Actions */}
+        <div className="flex justify-end gap-3 p-6 border-t">
+           <button
+          onClick={() => setIsDeleteModalOpen(false)}
+          className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 font-medium transition-all"
+        >
+          Cancel
+        </button>
+       <button
+          onClick={confirmDelete}
+          className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all"
+        >
+          Delete
+        </button>
+        </div>
+      </div>
+    </div>
+)}
 
 {/* Edit Modal */}
 {IsEditAppointment && (
@@ -450,6 +602,7 @@ export default function Appointment() {
                 <input
                   type="time"
                   value={slot.time}
+                  step="60"  
                   onChange={(e) => handleTimeSlotChange(index, "time", e.target.value)}
                   className="w-full border-gray-300 rounded-xl mb-2 px-4 py-2"
                 />
@@ -474,7 +627,6 @@ export default function Appointment() {
                 )}
               </div>
             ))}
-
             <button
               type="button"
               onClick={UpdateaddNewSlot}
