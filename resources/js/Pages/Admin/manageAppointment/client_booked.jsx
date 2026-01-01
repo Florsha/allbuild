@@ -122,9 +122,9 @@ export default function ClientBooked() {
                         filteredData.map((item) =>(
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-6 py-4 text-sm text-gray-700">{item.reference_number}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.client_assign.client.name}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.services_offer.title}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.sub_category.title}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.client_assign.client?.name}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.services_offer?.title}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.sub_category?.title}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{new Date(
                             `${item.client_assign.appointment.effective_date} ${item.client_assign.appointment.time}`

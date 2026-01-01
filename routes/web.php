@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\DashboardCtrl;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\VideoTestimonialController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
@@ -76,7 +77,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         //client Booked
         Route::get('admin/clientBooked', [AdminController::class, 'ClientBookedAppointment'])->name('appointment.clientBooked');
-        Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
+        // Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
+
+        Route::resource('video-testimonials', VideoTestimonialController::class);
+
 
     });
     
