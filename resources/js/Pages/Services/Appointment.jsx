@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import TimeSlotModal from "./TimeSlotModal";
 
-export default function CalendarBooking({errors, client_slot, manageAppointments, onAppointmentChange}) {
+export default function CalendarBooking({error, client_slot, manageAppointments, onAppointmentChange}) {
   console.log("manageAppointments", manageAppointments);
-
+console.log("error", error);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
@@ -220,7 +220,9 @@ const renderCalendarDays = () => {
             onAppointmentChange(slot.id); // <-- send value UP to parent
           }}
         />
-
+       {error && (
+          <p className="text-red-500 text-sm mt-2 font-bold">{error}</p>
+        )}
     </div>
   );
   

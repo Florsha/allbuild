@@ -13,7 +13,7 @@ export default function ClientInfo({ description, file,error, onDescriptionChang
         onChange={(e) => onDescriptionChange(e.target.value)}
         placeholder="Project Description"
         className={`w-full rounded-lg px-4 py-2 border
-          ${error ? "border-red-500 focus:ring-red-400" : "border-gray-300"}
+          ${error ? "border-red-500 focus:ring-red-400 font-bold" : "border-gray-300"}
         `}
         rows="4"
       ></textarea>
