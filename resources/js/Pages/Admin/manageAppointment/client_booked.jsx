@@ -9,8 +9,14 @@ export default function ClientBooked() {
 
     const [showModal, setShowModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
-console.log("type", requestType);
+console.log("requestType value:", requestType);
+console.log("requestType typeof:", typeof requestType);
 
+const reqAccepted = selectedClient?.status === "accepted" ? "accepted" : '';
+const reqPending = selectedClient?.status === "pending" ? "pending" : '';
+const reqApproved = selectedClient?.status === "approved" ? "approved" : '';
+const reqOngoing = selectedClient?.status === "ongoing" ? "ongoing" : '';
+console.log(reqAccepted);
   const filterType = 
       requestType === "pending"
       ? "Client Pending Requests"
@@ -32,7 +38,7 @@ console.log("type", requestType);
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Yes, update",
-        cancelButtonText: "Cancel",
+        cancelButtonText: "close",
         confirmButtonColor: "#2563eb",
         cancelButtonColor: "#9ca3af",
         width: 380, // small pop modal
@@ -130,7 +136,6 @@ console.log("type", requestType);
                           <td className="px-6 py-4 text-sm text-gray-700">{item.client_assign.client.name}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{item.services_offer.title}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{item.sub_category.title}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">{new Date(
                             `${item.client_assign.appointment?.effective_date} ${item.client_assign.appointment?.time}`
                               ).toLocaleString("en-PH", {
@@ -142,6 +147,7 @@ console.log("type", requestType);
                                 hour12: true,
                               })}
                           </td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
                           <td className="px-6 py-4 text-sm text-gray-700">     
                             <button 
                                 onClick={() => openModal(item)}
@@ -295,7 +301,8 @@ console.log("type", requestType);
                   </button>
                   {/* STATUS ACTIONS */}
                   <div className="flex w-full sm:w-auto flex-wrap gap-3">
-                    {requestType === "pending" ? (
+                    
+                    {  requestType.includes(reqPending) ? (
                       <>
                         <button
                           onClick={() => confirmStatusUpdate("accepted")}
@@ -305,13 +312,31 @@ console.log("type", requestType);
                         </button>
 
                         <button
-                          onClick={() => confirmStatusUpdate("rejected")}
-                          className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
+                          onClick={() => confirmStatusUpdate("cancelled")}
+                          className="px-6 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Rejected
+                          Cancelled
                         </button>
                       </>
-                    ) : (
+                    ) : requestType.includes(reqApproved) ? (
+                      <>
+                        <button
+                          onClick={() => confirmStatusUpdate("ongoing")}
+                          className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Ongoing
+                        </button>
+                      </>
+                    ) : requestType.includes(reqOngoing) ? (
+
+                        <button
+                          onClick={() => confirmStatusUpdate("completed")}
+                          className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
+                        >
+                          Completed
+                        </button>
+
+                    ) : requestType.includes(reqAccepted) ? (
                       <>
                         <button
                           onClick={() => confirmStatusUpdate("approved")}
@@ -321,15 +346,14 @@ console.log("type", requestType);
                         </button>
 
                         <button
-                          onClick={() => confirmStatusUpdate("completed")}
-                          className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
+                          onClick={() => confirmStatusUpdate("rejected")}
+                          className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Completed
+                          Rejected
                         </button>
                       </>
-                    )}
+                    ) : 'none'}
                   </div>
-
                 </div>
               </div>
 

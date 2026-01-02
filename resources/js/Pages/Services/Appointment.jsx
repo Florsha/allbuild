@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import TimeSlotModal from "./TimeSlotModal";
 
-export default function CalendarBooking({client_slot, manageAppointments, onAppointmentChange}) {
+export default function CalendarBooking({errors, client_slot, manageAppointments, onAppointmentChange}) {
   console.log("manageAppointments", manageAppointments);
 
   const [showModal, setShowModal] = useState(false);

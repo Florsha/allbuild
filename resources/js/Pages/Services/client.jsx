@@ -35,12 +35,32 @@ export default function Services() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleCategorySelect = (catId) => {
     console.log("Cat Id", catId);
      setFormData(prev => ({ ...prev, category: catId }));
       setSelectedCategory(catId);
   }
+
+  const handleNext = () => {
+    // Step 2 validation
+    if (step === 2) {
+      if (!formData.description || formData.description.trim() === "") {
+        setErrors({ description: "Project description is required" });
+        return; // STOP here
+      }
+    }
+
+    if (step === 3 && (!formData.appointment || formData.appointment.length === 0)) {
+      setErrors(prev => ({ ...prev, appointment: "You must select an appointment before proceeding." }));
+      return;
+    }
+
+    // clear errors when valid
+    setErrors({});
+    setStep(step + 1);
+  };
 
   // const services = [
   //   {
@@ -344,6 +364,7 @@ export default function Services() {
                   {step === 2 && <ClientInfo
                     description={formData.description}
                     fileBluePrint = {formData.file}
+                    error={errors.description}
                     onDescriptionChange={(val) =>
                       setFormData(prev => ({ ...prev, description: val }))
                     }
@@ -351,7 +372,7 @@ export default function Services() {
                        setFormData(prev => ({ ...prev, file: val }))
                     }
                   />}
-                  {step === 3 && <Appointment client_slot={client_assign_slot} manageAppointments={manage_appointment}
+                  {step === 3 && <Appointment  error={errors.appointment} client_slot={client_assign_slot} manageAppointments={manage_appointment}
                     onAppointmentChange={(val) =>
                       setFormData(prev => ({ ...prev, appointment: val }))
                     }
@@ -374,8 +395,13 @@ export default function Services() {
                     )}
                     {step < 4 ? (
                       <button
-                        onClick={() => setStep(step + 1)}
-                        className="ml-auto px-6 py-2 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500 transition"
+                        onClick={handleNext}
+                        className={`ml-auto px-6 py-2 font-semibold rounded-lg transition
+                          ${
+                            step === 2 && (!formData.description || formData.description.trim() === "") || (step === 3 && (!formData.appointment))
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                              : "bg-yellow-400 text-gray-900 hover:bg-yellow-500"
+                          }`}
                       >
                         Next
                       </button>
