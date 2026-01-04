@@ -96,7 +96,7 @@ export default function AdminLayout({ header, children }) {
                   <span>Pending Requests</span>
                 </NavLink>
 
-                <NavLink href={route('appointment.clientBooked', { type: ['accepted','completed','rejected'] })} className="flex items-center space-x-2">
+                <NavLink href={route('appointment.clientBooked', { type: ['accepted','completed','rejected','approved','ongoing'] })} className="flex items-center space-x-2">
                   <CheckCircleIcon className="w-4 h-4 text-gray-600" />
                   <span>Request Status</span>
                 </NavLink>

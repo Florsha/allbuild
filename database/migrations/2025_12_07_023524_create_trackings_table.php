@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('trackings', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_request_id');
+            $table->string('reference_number');
             $table->string('status');  
             $table->timestamps();
         });

@@ -118,13 +118,15 @@ class AdminController extends Controller
     {
         $type = $request->query('type'); 
        
+        $type = is_array($type) ? $type : [$type];
+
         $clientRequest = ClientRequest::with([
             'clientAssign.client',
             'clientAssign.appointment.user',
             'servicesOffer',
             'subCategory'
         ])
-        ->where('status', $type)
+        ->whereIn('status', $type)
         ->latest()->paginate(10);
 
         return Inertia::render('Admin/manageAppointment/client_booked',[
