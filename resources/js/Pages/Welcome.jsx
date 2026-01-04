@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play} from 'lucide-react';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
+    const [playingId, setPlayingId] = useState(null);
+
     const contributors = [
         {
             name: "Jane Doe",
@@ -385,74 +387,104 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 </div>
             </section>
             {/* ✅ NEW: Video Testimonials Section */}
-            <section id="testimonials" className="py-24 bg-gradient-to-br from-gray-900 to-gray-800">
-            <div className="max-w-6xl mx-auto px-6">
-                <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
-                    Watch Their <span className="text-yellow-400">Success Stories</span>
-                </h2>
-                <p className="text-xl text-gray-300">See how contributors are transforming communities</p>
-                </div>
-                
-                {/* Featured Video */}
-                <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                className="mb-12"
-                >
-                <div className="relative aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl">
-                    <img 
-                    src="https://via.placeholder.com/1280x720?text=Featured+Story" 
-                    alt="Featured testimonial"
+             <section id="testimonials" className="py-24 bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
+            Watch Their <span className="text-yellow-400">Success Stories</span>
+          </h2>
+          <p className="text-xl text-gray-300">See how contributors are transforming communities</p>
+        </div>
+
+        {/* Featured Video: show first video */}
+        {videos.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="mb-12"
+          >
+            <div className="relative aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl cursor-pointer">
+              {playingId === videos[0].id ? (
+                <video
+                  src={videos[0].videoUrl}
+                  controls
+                  autoPlay
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <>
+                  {/* <img
+                    src={videos[0].thumbnail || videos[0].videoUrl}
+                    alt={videos[0].name}
                     className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-30 transition-all cursor-pointer group">
+                  /> */}
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-30 transition-all"
+                    onClick={() => setPlayingId(videos[0].id)}
+                  >
                     <motion.div
-                        whileHover={{ scale: 1.15 }}
-                        className="w-24 h-24 bg-yellow-500 rounded-full flex items-center justify-center shadow-2xl"
+                      whileHover={{ scale: 1.15 }}
+                      className="w-24 h-24 bg-yellow-500 rounded-full flex items-center justify-center shadow-2xl"
                     >
-                        <Play className="w-12 h-12 text-white fill-white ml-2" />
+                      <Play className="w-12 h-12 text-white fill-white ml-2" />
                     </motion.div>
-                    </div>
-                </div>
-                <div className="mt-6 text-center">
-                    <h3 className="text-2xl font-bold text-white mb-2">Maria's Journey: From Volunteer to Leader</h3>
-                    <p className="text-gray-300">Watch how Maria transformed her community in just 6 months</p>
-                </div>
-                </motion.div>
-                
-                {/* Video Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map((video, index) => (
-                    <motion.div
-                    key={video}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="group cursor-pointer"
-                    >
-                    <div className="relative aspect-video bg-gray-700 rounded-2xl overflow-hidden shadow-lg">
-                        <img 
-                        src={`https://via.placeholder.com/640x360?text=Story+${video}`}
-                        alt={`Video ${video}`}
-                        className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-50 transition-all">
-                        <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <Play className="w-6 h-6 text-white fill-white ml-1" />
-                        </div>
-                        </div>
-                        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                        3:15
-                        </div>
-                    </div>
-                    <h4 className="mt-3 text-white font-semibold">Contributor Story {video}</h4>
-                    <p className="text-gray-400 text-sm">Real impact, real change</p>
-                    </motion.div>
-                ))}
-                </div>
+                  </div>
+                </>
+              )}
             </div>
-            </section>
+            <div className="mt-6 text-center">
+              <h3 className="text-2xl font-bold text-white mb-2">{videos[0].name}</h3>
+              <p className="text-gray-300">{videos[0].testimonial}</p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Video Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {videos.slice(1).map((video, index) => (
+            <motion.div
+              key={video.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="group cursor-pointer"
+            >
+              <div className="relative aspect-video bg-gray-700 rounded-2xl overflow-hidden shadow-lg">
+                {playingId === video.id ? (
+                  <video
+                    src={video.videoUrl}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <img
+                      src={video.thumbnail || video.videoUrl}
+                      alt={video.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div
+                      className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-50 transition-all"
+                      onClick={() => setPlayingId(video.id)}
+                    >
+                      <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white fill-white ml-1" />
+                      </div>
+                    </div>
+                  </>
+                )}
+                <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                  {video.duration || '0:00'}
+                </div>
+              </div>
+              <h4 className="mt-3 text-white font-semibold">{video.name}</h4>
+              <p className="text-gray-400 text-sm">{video.role}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
 
             {/* Enhanced Footer */}
             <footer className="bg-[#1a2332] text-white">

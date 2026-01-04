@@ -59,7 +59,7 @@ class VideoTestimonialController extends Controller
         return redirect()->back();
     }
 
-    public function update(Request $request, VideoTestimonial $videoTestimonial)
+    public function update(Request $request, VideoTestimonial $video_testimonial)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -70,27 +70,36 @@ class VideoTestimonialController extends Controller
             'thumbnail' => 'nullable|image|max:2048',
         ]);
 
+            // Handle video upload
         if ($request->hasFile('video')) {
-            Storage::disk('public')->delete($videoTestimonial->video_path);
-            $videoTestimonial->video_path = $request->file('video')->store('videos', 'public');
+            // Delete old video if exists
+            if ($video_testimonial->video_path) {
+                Storage::disk('public')->delete($video_testimonial->video_path);
+            }
+            $data['video_path'] = $request->file('video')->store('videos', 'public');
         }
 
+        // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
-            Storage::disk('public')->delete($videoTestimonial->thumbnail_path);
-            $videoTestimonial->thumbnail_path = $request->file('thumbnail')->store('thumbnails', 'public');
+            if ($video_testimonial->thumbnail_path) {
+                Storage::disk('public')->delete($video_testimonial->thumbnail_path);
+            }
+            $data['thumbnail_path'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
 
-        $videoTestimonial->update($data);
+        $video_testimonial->update($data);
 
         return redirect()->back();
     }
 
     public function destroy(VideoTestimonial $videoTestimonial)
     {
-        Storage::disk('public')->delete([
-            $videoTestimonial->video_path,
-            $videoTestimonial->thumbnail_path,
-        ]);
+        Storage::disk('public')->delete(
+            array_filter([
+                $videoTestimonial->video_path,
+                $videoTestimonial->thumbnail_path,
+            ])
+        );
 
         $videoTestimonial->delete();
 

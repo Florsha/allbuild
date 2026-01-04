@@ -10,14 +10,31 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
 use App\Http\Controllers\Admin\AdminController; 
+use App\Models\VideoTestimonial;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Route::get('/', function () {
+
+    $videos = VideoTestimonial::latest()->get()->map(function ($v) {
+        return [
+            'id' => $v->id,
+            'name' => $v->name,
+            'role' => $v->role,
+            'testimonial' => $v->testimonial,
+            'rating' => $v->rating,
+            'videoUrl' => Storage::url($v->video_path),
+            'thumbnail' => $v->thumbnail_path ? Storage::url($v->thumbnail_path) : null,
+            'duration' => $v->duration,
+        ];
+    });
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'videos' => $videos,
     ]);
 });
 

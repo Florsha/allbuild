@@ -3,6 +3,7 @@ import { Upload, Video, X, Check, Loader, Play, Trash2, Edit2, Star, User } from
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from "@inertiajs/react";
+import VideoCard from './VideoCard';
 
 export default function VideoUploadDashboard({ videos }) {
 
@@ -76,24 +77,60 @@ export default function VideoUploadDashboard({ videos }) {
     });
   };
 
+  // const handleSubmit = () => {
+  //   const formDataToSend = {
+  //     ...data,
+  //     video: data.video || videoPreview,         // video file or preview
+  //     thumbnail: data.thumbnail || thumbnailPreview,
+  //   };
+
+  //   if (editingId) {
+  //     put(route('video-testimonials.update', editingId), {
+  //       data: formDataToSend,
+  //       forceFormData: true,
+  //       onSuccess: () => cleanup(),
+  //     });
+  //   } else {
+  //     post(route('video-testimonials.store'), {
+  //       data: formDataToSend,
+  //       forceFormData: true,
+  //       onSuccess: () => cleanup(),
+  //     });
+  //   }
+  // };
   const handleSubmit = () => {
-    const formDataToSend = {
-      ...data,
-      video: data.video || videoPreview,         // video file or preview
-      thumbnail: data.thumbnail || thumbnailPreview,
-    };
+    setUploadState(prev => ({ ...prev, isUploading: true }));
+
+    // Prepare FormData for Inertia
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', data.name);
+    formDataToSend.append('role', data.role);
+    formDataToSend.append('testimonial', data.testimonial);
+    formDataToSend.append('rating', data.rating);
+
+      // Include video file only if the user selected a new one
+    if (data.video) {
+      formDataToSend.append('video', data.video);
+    }
+
+    // Include thumbnail only if the user selected a new one
+    if (data.thumbnail) {
+      formDataToSend.append('thumbnail', data.thumbnail);
+    }
 
     if (editingId) {
       put(route('video-testimonials.update', editingId), {
         data: formDataToSend,
         forceFormData: true,
         onSuccess: () => cleanup(),
+        onFinish: () => setUploadState(prev => ({ ...prev, isUploading: false })),
       });
     } else {
       post(route('video-testimonials.store'), {
         data: formDataToSend,
         forceFormData: true,
         onSuccess: () => cleanup(),
+        onFinish: () => setUploadState(prev => ({ ...prev, isUploading: false })),
       });
     }
   };
@@ -118,10 +155,10 @@ export default function VideoUploadDashboard({ videos }) {
       role: video.role,
       testimonial: video.testimonial,
       rating: video.rating,
-      video: null,
-      thumbnail: null,
     });
 
+    setVideoPreview(video.videoUrl);
+    setThumbnailPreview(video.thumbnail); // show existing thumbnail
     setEditingId(video.id);
     setUploadState(prev => ({ ...prev, showForm: true }));
   };
@@ -400,89 +437,14 @@ export default function VideoUploadDashboard({ videos }) {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videos.map((video) => {
-                const [isPlaying, setIsPlaying] = useState(false);
-
-                return (
-                  <motion.div
-                    key={video.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all"
-                  >
-                    {/* Video Thumbnail / Player */}
-                    <div
-                      className="relative aspect-video bg-gray-900 group cursor-pointer"
-                      onClick={() => setIsPlaying(true)}
-                    >
-                      {isPlaying ? (
-                        <video
-                          src={video.video_path} // replace with your video URL
-                          controls
-                          autoPlay
-                          className="w-full h-full object-cover rounded-2xl"
-                        />
-                      ) : (
-                        <img
-                          src={video.thumbnail} // thumbnail image
-                          alt={video.name}
-                          className="w-full h-full object-cover rounded-2xl"
-                        />
-                      )}
-
-                      {!isPlaying && (
-                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                          <Play className="w-12 h-12 text-white" />
-                        </div>
-                      )}
-
-                      <div className="absolute top-3 right-3 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                        {video.duration}
-                      </div>
-                    </div>
-
-                    {/* Video Info */}
-                    <div className="p-5">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center">
-                          <User className="w-8 h-8 text-yellow-600 mr-2" />
-                          <div>
-                            <h3 className="font-semibold text-gray-900">{video.name}</h3>
-                            <p className="text-sm text-gray-500">{video.role}</p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleEdit(video)}
-                            className="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(video.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                        "{video.testimonial}"
-                      </p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex">
-                          {Array.from({ length: video.rating }).map((_, i) => (
-                            <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-400">{video.uploadDate}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {videos.map(video => (
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
             </div>
 
             {videos.length === 0 && (
