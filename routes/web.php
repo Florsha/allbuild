@@ -5,18 +5,36 @@ use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\DashboardCtrl;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\VideoTestimonialController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
 use App\Http\Controllers\Admin\AdminController; 
+use App\Models\VideoTestimonial;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Route::get('/', function () {
+
+    $videos = VideoTestimonial::latest()->get()->map(function ($v) {
+        return [
+            'id' => $v->id,
+            'name' => $v->name,
+            'role' => $v->role,
+            'testimonial' => $v->testimonial,
+            'rating' => $v->rating,
+            'videoUrl' => Storage::url($v->video_path),
+            'thumbnail' => $v->thumbnail_path ? Storage::url($v->thumbnail_path) : null,
+            'duration' => $v->duration,
+        ];
+    });
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'videos' => $videos,
     ]);
 });
 
@@ -78,7 +96,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         //client Booked
         Route::get('admin/clientBooked', [AdminController::class, 'ClientBookedAppointment'])->name('appointment.clientBooked');
-        Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
+        // Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
+
+        Route::resource('video-testimonials', VideoTestimonialController::class);
+
 
     });
     
