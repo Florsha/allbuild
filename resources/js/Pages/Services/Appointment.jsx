@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useRef ,useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import TimeSlotModal from "./TimeSlotModal";
@@ -13,6 +13,8 @@ console.log("error", error);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState("Month");
+
+  const timeSlotRef = useRef(null);
 
   // Get calendar data
   const { year, month, monthName, daysInMonth, firstDayOfWeek } = useMemo(() => {
@@ -31,6 +33,13 @@ console.log("error", error);
       (item) => item.effective_date === date
     );
     
+    setTimeout(() => {
+      timeSlotRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    })
+
     setSelectedSlots(slotsForDate);
     setSelectedDate(date);
     setShowModal(true);
@@ -116,8 +125,8 @@ const renderCalendarDays = () => {
  
     
     let bgColor = "bg-white";
-    if (isFullyBookedDay) bgColor = "bg-red-300";
-    else if (isPast) bgColor = "bg-red-300";
+    if (isFullyBookedDay) bgColor = "bg-gray-300";
+    else if (isPast) bgColor = "bg-gray-300";
     else if (isAvailable) bgColor = "bg-[#81C784]";
 
         // clickable only for available
@@ -209,7 +218,7 @@ const renderCalendarDays = () => {
         </div>
       </div>
 
-        <TimeSlotModal
+        {/* <TimeSlotModal
           open={showModal}
           onClose={() => setShowModal(false)}
           slotsForDate={selectedSlots}
@@ -222,7 +231,188 @@ const renderCalendarDays = () => {
         />
        {error && (
           <p className="text-red-500 text-sm mt-2 font-bold">{error}</p>
-        )}
+        )} */}
+
+        {/* TIME SLOT SECTION */}
+        {/* <div
+          ref={timeSlotRef}
+          className="mt-12 scroll-mt-24"
+        >
+          {selectedDate && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                  Appointment Time Slots
+                </h2>
+
+                <p className="text-xs text-gray-500 mb-4">
+                  Selected Date: <span className="font-medium">{selectedDate}</span>
+                </p>
+
+                <div className="grid gap-3">
+                  {selectedSlots.map(slot => {
+                    const bookedCount = client_slot.filter(
+                      s => s.appointment_id === slot.id
+                    ).length;
+
+                    const remaining = slot.slot - bookedCount;
+                    const available = remaining > 0;
+
+                    return (
+                      <label
+                        key={slot.id}
+                        className={`flex justify-between items-center p-3 rounded-lg border transition
+                          ${available
+                            ? "bg-green-50 border-green-300 hover:bg-green-100 cursor-pointer"
+                            : "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                          }`}
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{slot.time}</p>
+                          <p className="text-[11px]">
+                            Capacity: {bookedCount}/{slot.slot}
+                          </p>
+                        </div>
+
+                        <input
+                          type="radio"
+                          name="slot"
+                          disabled={!available}
+                          checked={selectedSlot?.id === slot.id}
+                          onChange={() => {
+                            setSelectedSlot(slot);
+                            onAppointmentChange(slot.id);
+                          }}
+                          className="accent-green-600"
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="lg:col-span-1">
+                <div className="bg-gray-50 border rounded-xl p-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                    Legend
+                  </h3>
+
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="w-4 h-4 rounded bg-green-400" />
+                      <span className="text-gray-700">Available Slot</span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="w-4 h-4 rounded bg-gray-400" />
+                      <span className="text-gray-600">Fully Booked / Disabled</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {error && (
+            <p className="text-red-500 text-sm mt-4 font-bold">{error}</p>
+          )}
+        </div> */}
+
+        {/* TIME SLOT SECTION — GUIDED TIMELINE */}
+        <div ref={timeSlotRef} className="mt-16 scroll-mt-24">
+          {selectedDate && (
+            <div className="max-w-4xl mx-auto">
+
+              {/* Header */}
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Choose Your Appointment Time
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Available slots for <span className="font-medium">{selectedDate}</span>
+                </p>
+              </div>
+
+              <div className="relative border-l-2 border-gray-200 pl-6 space-y-4">
+
+                {selectedSlots.map(slot => {
+                  const bookedCount = client_slot.filter(
+                    s => s.appointment_id === slot.id
+                  ).length;
+
+                  const remaining = slot.slot - bookedCount;
+                  const available = remaining > 0;
+
+                  return (
+                    <div
+                      key={slot.id}
+                      className={`relative group rounded-xl p-4 transition
+                        ${available
+                          ? "bg-white border shadow-sm hover:shadow-md cursor-pointer"
+                          : "bg-gray-100 border text-gray-400 cursor-not-allowed"
+                        }
+                        ${selectedSlot?.id === slot.id
+                          ? "ring-2 ring-green-500"
+                          : ""
+                        }`}
+                      onClick={() => {
+                        if (!available) return;
+                        setSelectedSlot(slot);
+                        onAppointmentChange(slot.id);
+                      }}
+                    >
+                      {/* Timeline Dot */}
+                      <span
+                        className={`absolute -left-[38px] top-6 w-4 h-4 rounded-full
+                          ${available ? "bg-green-500" : "bg-gray-400"}`}
+                      />
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-sm">{slot.time}</p>
+                          <p className="text-xs mt-1">
+                            Capacity: {bookedCount}/{slot.slot}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`text-xs font-medium px-3 py-1 rounded-full
+                            ${available
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-200 text-gray-500"
+                            }`}
+                        >
+                          {available ? "Available" : "Fully Booked"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+              </div>
+
+              {/* Legend */}
+              <div className="mt-8 flex gap-6 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-green-500" />
+                  Available
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-gray-400" />
+                  Fully Booked
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {error && (
+            <p className="text-red-500 text-sm mt-4 font-semibold text-center">
+              {error}
+            </p>
+          )}
+        </div>
     </div>
   );
   
