@@ -1,29 +1,38 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head,useForm,usePage, router } from "@inertiajs/react";
 import { useState, useMemo } from "react";
+import LocationPreview from "@/Components/LocationPreview";
 import Swal from 'sweetalert2';
 
 export default function ClientBooked() {
-    const {clientBooked, requestType } = usePage().props;
-    const [search, setSearch] = useState("");
+  const {clientBooked, requestType } = usePage().props;
+  const [search, setSearch] = useState("");
 
-    const [showModal, setShowModal] = useState(false);
-    const [selectedClient, setSelectedClient] = useState(null);
-console.log("requestType value:", requestType);
-console.log("requestType typeof:", typeof requestType);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [address, setAddress] = useState("");
 
-const reqAccepted = selectedClient?.status === "accepted" ? "accepted" : '';
-const reqPending = selectedClient?.status === "pending" ? "pending" : '';
-const reqApproved = selectedClient?.status === "approved" ? "approved" : '';
-const reqOngoing = selectedClient?.status === "ongoing" ? "ongoing" : '';
-console.log(reqAccepted);
+  const reqAccepted = selectedClient?.status === "accepted" ? "accepted" : '';
+  const reqPending = selectedClient?.status === "pending" ? "pending" : '';
+  const reqApproved = selectedClient?.status === "approved" ? "approved" : '';
+  const reqOngoing = selectedClient?.status === "ongoing" ? "ongoing" : '';
+  console.log(reqAccepted);
+  console.log("data", clientBooked);
   const filterType = 
       requestType === "pending"
       ? "Client Pending Requests"
       : "Client Updated Status"
-    const openModal = (item) => {
+    const openModal = async (item) => {
       setSelectedClient(item);
       setShowModal(true);
+
+      if (item.latitude && item.longitude) {
+        const resolvedAddress = await getAddressFromLatLng(
+          item.latitude,
+          item.longitude
+        );
+        setAddress(resolvedAddress);
+      }
     };
 
     const closeModal = () => {
@@ -64,6 +73,18 @@ console.log(reqAccepted);
         }
       });
     };
+
+    const getAddressFromLatLng = async (lat, lng) => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+        );
+        const data = await res.json();
+        return data.display_name || "Address not found";
+      } catch {
+        return "Unable to fetch address";
+      }
+      };
 
     const filteredData = useMemo(() => {
       if(!search) return clientBooked.data;
@@ -189,7 +210,7 @@ console.log(reqAccepted);
                         ))}
                       </div>
                     </div>
-              </div>
+                </div>
 
               {/* Modal */}
 
@@ -287,6 +308,46 @@ console.log(reqAccepted);
                     </p>
                   </div>
                 </div>
+
+                {/* LOCATION CARD */}
+                  <div className="bg-white border rounded-2xl p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                      📍 Client Location
+                    </h4>
+
+                    <LocationPreview
+                      lat={selectedClient.latitude}
+                      lng={selectedClient.longitude}
+                    />
+
+                    <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="text-sm text-gray-600">
+                        <p>
+                          <span className="font-medium">Latitude:</span>{" "}
+                          {selectedClient.latitude}
+                        </p>
+                        <p>
+                          <span className="font-medium">Longitude:</span>{" "}
+                          {selectedClient.longitude}
+                        </p>
+                         <p>
+                          <span className="font-medium">Address:</span>{" "}
+                           {address || "Resolving address..."}
+                        </p>
+                        
+                      </div>
+
+                      <a
+                        href={`https://www.google.com/maps?q=${selectedClient.latitude},${selectedClient.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+                                  bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium"
+                      >
+                        🧭 Open in Google Maps
+                      </a>
+                    </div>
+                  </div>        
               </div>
 
               {/* FOOTER */}
