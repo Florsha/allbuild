@@ -11,11 +11,14 @@ export default function ClientBooked() {
   const [showModal, setShowModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [address, setAddress] = useState("");
-
+console.log("my statusessss", requestType);
   const reqAccepted = selectedClient?.status === "accepted" ? "accepted" : '';
   const reqPending = selectedClient?.status === "pending" ? "pending" : '';
   const reqApproved = selectedClient?.status === "approved" ? "approved" : '';
   const reqOngoing = selectedClient?.status === "ongoing" ? "ongoing" : '';
+
+  const finished = selectedClient?.status === "completed" ? "completed" : '';
+  const rejected = selectedClient?.status === "rejected" ? "rejected" : '';
   console.log(reqAccepted);
   console.log("data", clientBooked);
   const filterType = 
@@ -498,7 +501,7 @@ export default function ClientBooked() {
                           Rejected
                         </button>
                       </>
-                    ) : requestType.includes("completed") ? (
+                    ) : requestType.includes(finished) ? (
                        <button
                           disabled
                           className="px-6 py-2 rounded-lg bg-gray-300 text-gray-600 font-medium cursor-not-allowed flex items-center gap-2"
@@ -506,7 +509,17 @@ export default function ClientBooked() {
                           <i className="fa fa-check"></i>
                           Finished
                         </button>
-                    ) : 'none'}
+                    ) : requestType.includes(rejected) ? (
+                        <button
+                          disabled
+                          className="px-6 py-2 rounded-lg bg-red-100 text-red-700 font-semibold cursor-not-allowed flex items-center gap-2"
+                        >
+                          <i className="fa fa-times-circle"></i>
+                          Rejected
+                        </button>
+                    )
+                    
+                    : 'none'}
                   </div>
                 </div>
               </div>
