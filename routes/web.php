@@ -98,6 +98,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('admin/clientBooked', [AdminController::class, 'ClientBookedAppointment'])->name('appointment.clientBooked');
         // Route::get('admin/video', [AdminController::class, 'manageVideo'])->name('manage.video');
 
+        Route::put('admin/clientBooked/updateStatus/{id}', [AdminController::class, 'saveTracking'])->name('admin.clientBooked.updateStatus');
+
         Route::resource('video-testimonials', VideoTestimonialController::class);
 
 

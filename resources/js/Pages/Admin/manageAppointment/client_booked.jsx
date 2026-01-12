@@ -40,22 +40,88 @@ export default function ClientBooked() {
       setSelectedClient(null);
     };
 
-    const confirmStatusUpdate = (status) => {
+    // const confirmStatusUpdate = (status) => {
+    //   Swal.fire({
+    //     title: "Update Status?",
+    //     text: `Do you want to mark this client as "${status}"?`,
+    //     icon: "question",
+    //     input: "textarea",
+    //     inputLabel: "Remarks",
+    //     inputPlaceholder: "Enter remarks ",
+    //     inputAttributes: {
+    //       rows: 3,
+    //     },
+    //     showCancelButton: true,
+    //     confirmButtonText: "Yes, update",
+    //     cancelButtonText: "close",
+    //     confirmButtonColor: "#2563eb",
+    //     cancelButtonColor: "#9ca3af",
+    //     width: 380, // small pop modal
+    //     inputValidator: (value) => {
+    //       // optional validation
+    //       if (status === "rejected" || status === "accepted" || status === "cancelled" || status === "completed" || status === "ongoing" || status === "approved" && !value) {
+    //         return "Remarks are required";
+    //       }
+    //     },
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       router.put(
+    //         route("admin.clientBooked.updateStatus", selectedClient.id),
+    //         { status: status,
+    //           remarks: result.value
+    //          },
+    //         {
+    //           preserveScroll: true,
+    //           onSuccess: () => {
+    //             Swal.fire({
+    //               icon: "success",
+    //               title: "Updated",
+    //               text: `Client status set to ${status}`,
+    //               timer: 1500,
+    //               showConfirmButton: false,
+    //             });
+    //             closeModal();
+    //           },
+    //         }
+    //       );
+    //     }
+    //   });
+    // };
+
+     const confirmStatusUpdate = (status, refer_number) => {
       Swal.fire({
         title: "Update Status?",
         text: `Do you want to mark this client as "${status}"?`,
         icon: "question",
+        input: "textarea",
+        inputLabel: "Remarks",
+        inputPlaceholder: "Enter remarks",
+        inputAttributes: {
+          rows: 3,
+        },
         showCancelButton: true,
         confirmButtonText: "Yes, update",
-        cancelButtonText: "close",
+        cancelButtonText: "Close",
         confirmButtonColor: "#2563eb",
         cancelButtonColor: "#9ca3af",
-        width: 380, // small pop modal
+        width: 420,
+        inputValidator: (value) => {
+          console.log("value remarks", value, 'status', status === "accepted");
+          const remarks = value?.trim();
+          // optional validation
+         if (["rejected", "accepted", "cancelled", "completed", "ongoing", "approved"].includes(status) && !remarks) {
+            return "Remarks are required";
+          }
+        },
       }).then((result) => {
         if (result.isConfirmed) {
           router.put(
             route("admin.clientBooked.updateStatus", selectedClient.id),
-            { status },
+            {
+              status: status,
+              remarks: result.value, // 👈 send remarks
+              referrence_number: refer_number
+            },
             {
               preserveScroll: true,
               onSuccess: () => {
@@ -67,12 +133,30 @@ export default function ClientBooked() {
                   showConfirmButton: false,
                 });
                 closeModal();
+
+                if (status === "accepted") {
+                  window.location.href =
+                    "/admin/clientBooked?type%5B0%5D=accepted&type%5B1%5D=completed&type%5B2%5D=rejected&type%5B3%5D=approved&type%5B4%5D=ongoing";
+                }
+
               },
             }
           );
         }
       });
     };
+
+    const statusClasses = {
+      pending: "bg-yellow-100 text-yellow-800",
+      rejected: "bg-red-100 text-red-800",
+      accepted: "bg-green-100 text-green-800",
+      cancelled: "bg-gray-100 text-gray-800",
+      completed: "bg-blue-100 text-blue-800",
+      ongoing: "bg-yellow-100 text-yellow-800",
+      approved: "bg-emerald-100 text-emerald-800",
+    };
+
+    const defaultStatusClass = "bg-gray-100 text-gray-800";
 
     const getAddressFromLatLng = async (lat, lng) => {
       try {
@@ -168,7 +252,14 @@ export default function ClientBooked() {
                                 hour12: true,
                               })}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
+                          <td className="px-6 py-4 text-sm">
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize
+                                ${statusClasses[item.status] || defaultStatusClass}`}
+                            >
+                              {item.status}
+                            </span>
+                          </td>
                           <td className="px-6 py-4 text-sm text-gray-700">     
                             <button 
                                 onClick={() => openModal(item)}
@@ -310,6 +401,7 @@ export default function ClientBooked() {
                 </div>
 
                 {/* LOCATION CARD */}
+                {selectedClient?.latitude && selectedClient?.longitude &&(
                   <div className="bg-white border rounded-2xl p-6 shadow-sm">
                     <h4 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
                       📍 Client Location
@@ -322,14 +414,6 @@ export default function ClientBooked() {
 
                     <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div className="text-sm text-gray-600">
-                        <p>
-                          <span className="font-medium">Latitude:</span>{" "}
-                          {selectedClient.latitude}
-                        </p>
-                        <p>
-                          <span className="font-medium">Longitude:</span>{" "}
-                          {selectedClient.longitude}
-                        </p>
                          <p>
                           <span className="font-medium">Address:</span>{" "}
                            {address || "Resolving address..."}
@@ -347,7 +431,8 @@ export default function ClientBooked() {
                         🧭 Open in Google Maps
                       </a>
                     </div>
-                  </div>        
+                  </div>   
+                )}     
               </div>
 
               {/* FOOTER */}
@@ -366,14 +451,14 @@ export default function ClientBooked() {
                     {  requestType.includes(reqPending) ? (
                       <>
                         <button
-                          onClick={() => confirmStatusUpdate("accepted")}
+                          onClick={() => confirmStatusUpdate("accepted", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
                         >
                           Accepted
                         </button>
 
                         <button
-                          onClick={() => confirmStatusUpdate("cancelled")}
+                          onClick={() => confirmStatusUpdate("cancelled", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium flex-1 sm:flex-none"
                         >
                           Cancelled
@@ -382,7 +467,7 @@ export default function ClientBooked() {
                     ) : requestType.includes(reqApproved) ? (
                       <>
                         <button
-                          onClick={() => confirmStatusUpdate("ongoing")}
+                          onClick={() => confirmStatusUpdate("ongoing",selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
                         >
                           Ongoing
@@ -391,7 +476,7 @@ export default function ClientBooked() {
                     ) : requestType.includes(reqOngoing) ? (
 
                         <button
-                          onClick={() => confirmStatusUpdate("completed")}
+                          onClick={() => confirmStatusUpdate("completed", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
                         >
                           Completed
@@ -400,19 +485,27 @@ export default function ClientBooked() {
                     ) : requestType.includes(reqAccepted) ? (
                       <>
                         <button
-                          onClick={() => confirmStatusUpdate("approved")}
+                          onClick={() => confirmStatusUpdate("approved", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
                         >
                           Approved
                         </button>
 
                         <button
-                          onClick={() => confirmStatusUpdate("rejected")}
+                          onClick={() => confirmStatusUpdate("rejected", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
                         >
                           Rejected
                         </button>
                       </>
+                    ) : requestType.includes("completed") ? (
+                       <button
+                          disabled
+                          className="px-6 py-2 rounded-lg bg-gray-300 text-gray-600 font-medium cursor-not-allowed flex items-center gap-2"
+                        >
+                          <i className="fa fa-check"></i>
+                          Finished
+                        </button>
                     ) : 'none'}
                   </div>
                 </div>

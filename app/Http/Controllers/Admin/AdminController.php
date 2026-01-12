@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\ManageAppointment;
 use App\Models\ClientRequest;
 use App\Models\ClientAssign;
+use App\Models\Tracking;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -195,5 +196,21 @@ class AdminController extends Controller
         return Inertia::render('Admin/ManageVideo', [
             //
         ]);
+    }
+
+    public function saveTracking(Request $request, $id){
+
+        $client_data = ClientRequest::where('reference_number', $request->referrence_number)
+            ->first();
+
+        $client_data->status = $request->status;
+        $client_data->save();
+
+        Tracking::create([
+            'reference_number' => $request->referrence_number,
+            'status' => $request->status,
+            'remarks' => $request->remarks
+        ]);
+
     }
 }
