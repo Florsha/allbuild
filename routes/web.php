@@ -9,7 +9,8 @@ use App\Http\Controllers\VideoTestimonialController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
-use App\Http\Controllers\Admin\AdminController; 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\TrackingController;
 use App\Models\VideoTestimonial;
 use App\Models\services;
 use Illuminate\Support\Facades\Storage;
@@ -114,6 +115,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/id-verification', [IDVerificationController::class, 'index'])->name('id.verification');
 Route::post('/id-verification/process', [IDVerificationController::class, 'process'])->name('id.verification.process');
+Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
+
 
 
 

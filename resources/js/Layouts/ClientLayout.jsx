@@ -39,7 +39,7 @@ export default function ClientLayout({ header, children }) {
               </Link>
             </div>
 
-            <div className="hidden sm:flex space-x-6">
+            <div className="relative hidden sm:flex items-center space-x-4">
               <NavLink href={route('services')} active={route().current('services')}>
                 <WrenchScrewdriverIcon className="inline h-5 w-5 mr-1" />
                 Services

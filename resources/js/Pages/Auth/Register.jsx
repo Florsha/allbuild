@@ -22,26 +22,36 @@ export default function Register() {
         terms_and_condition_concent: false,
     });
 
-    const submit = (e) => {
-        e.preventDefault();
-        post(route('register'), {
-            onSuccess: (page) => {
-                if (window.Lobibox) {
-                    window.Lobibox.notify('info', {
-                        msg: 'Registration successful! Redirecting to dashboard...',
-                        position: 'top right',
-                        sound: false,
-                    });
-                } else {
-                    alert('Registration successful! Redirecting to dashboard...');
-                }
-                setTimeout(() => {
-                    window.location.href = route('dashboard');
-                }, 1500);
-            },
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
-    };
+   const submit = (e) => {
+    e.preventDefault();
+
+    post(route('register'), {
+        onSuccess: () => {
+            if (window.Lobibox) {
+                window.Lobibox.notify('info', {
+                    title: 'Registration Successful',
+                    msg: 'Redirecting to your dashboard...',
+                    position: 'top right',
+                    icon: 'bx bx-info-circle', // Boxicons / FontAwesome works
+                    delay: 3000,
+                    delayIndicator: true,
+                    closeOnClick: false,
+                    pauseDelayOnHover: true,
+                    sound: false,
+                    width: 380,
+                    rounded: true,
+                });
+            } else {
+                alert('Registration successful! Redirecting to dashboard...');
+            }
+
+            setTimeout(() => {
+                window.location.href = route('dashboard');
+            }, 1500);
+        },
+        onFinish: () => reset('password', 'password_confirmation'),
+    });
+};
 
     return (
         <GuestLayout>
