@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
 use App\Http\Controllers\Admin\AdminController; 
 use App\Models\VideoTestimonial;
+use App\Models\services;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -29,12 +30,15 @@ Route::get('/', function () {
         ];
     });
 
+    $all_services = services::all();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
         'videos' => $videos,
+        'all_services' => $all_services,
     ]);
 });
 

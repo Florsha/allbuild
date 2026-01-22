@@ -1,10 +1,12 @@
 import React, { useEffect, useState} from "react";
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import ServicesGrid from "@/Components/ServicesGrid";
 import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play} from 'lucide-react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
     const [playingId, setPlayingId] = useState(null);
+    const { all_services } = usePage().props;
 
     const contributors = [
         {
@@ -346,6 +348,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                             </motion.div>
                         ))}
                     </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+                        {/* RIGHT – Dynamic Services */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6 }}
+                            >
+                            <ServicesGrid services={all_services} />
+                        </motion.div>
+                    <div/>
                 </div>
             </section>
 

@@ -19,7 +19,7 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { all_services, services_offer, manage_appointment, flash, client_assign_slot } = usePage().props;
+  const { all_services, services_offer, manage_appointment, flash, client_assign_slot, user } = usePage().props;
   const [showFlash, setShowFlash] = useState(!!flash?.success);
   const [formData, setFormData] = useState({
     services_id: null,
@@ -217,10 +217,12 @@ export default function Services() {
       {/* SERVICES GRID */}
       <section className="py-20 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-14 text-center">
-            Choose Your Service
-          </h2>
-
+          { user.id && (
+             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-14 text-center">
+              Choose Your Service
+            </h2>
+          )}
+         
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {allservices.map((service) => (
               <div
