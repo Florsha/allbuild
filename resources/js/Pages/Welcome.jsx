@@ -1,10 +1,17 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play} from 'lucide-react';
+import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
 
-export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
+export default function Welcome({ videos }) {
     const [playingId, setPlayingId] = useState(null);
+    const videoRefs = useRef({});
+    const swiperRef = useRef(null);
+
 
     const contributors = [
         {
@@ -251,7 +258,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                         </div>
 
                         {/* Stats Section */}
-                        <div className="grid grid-cols-3 gap-8 mt-12 w-full max-w-2xl">
+                        {/* <div className="grid grid-cols-3 gap-8 mt-12 w-full max-w-2xl">
                             <div className="text-center">
                                 <div className="text-3xl md:text-4xl font-bold text-[#f4c430]">1000+</div>
                                 <div className="text-sm text-gray-300 mt-1">Projects Done</div>
@@ -264,7 +271,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                                 <div className="text-3xl md:text-4xl font-bold text-[#f4c430]">98%</div>
                                 <div className="text-sm text-gray-300 mt-1">Satisfaction</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
@@ -386,105 +393,177 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                     </div>
                 </div>
             </section>
-            {/* ✅ NEW: Video Testimonials Section */}
-             <section id="testimonials" className="py-24 bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
-            Watch Their <span className="text-yellow-400">Success Stories</span>
-          </h2>
-          <p className="text-xl text-gray-300">See how contributors are transforming communities</p>
-        </div>
-
-        {/* Featured Video: show first video */}
-        {videos.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="mb-12"
-          >
-            <div className="relative aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl cursor-pointer">
-              {playingId === videos[0].id ? (
-                <video
-                  src={videos[0].videoUrl}
-                  controls
-                  autoPlay
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <>
-                  {/* <img
-                    src={videos[0].thumbnail || videos[0].videoUrl}
-                    alt={videos[0].name}
-                    className="w-full h-full object-cover"
-                  /> */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-30 transition-all"
-                    onClick={() => setPlayingId(videos[0].id)}
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.15 }}
-                      className="w-24 h-24 bg-yellow-500 rounded-full flex items-center justify-center shadow-2xl"
-                    >
-                      <Play className="w-12 h-12 text-white fill-white ml-2" />
-                    </motion.div>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="mt-6 text-center">
-              <h3 className="text-2xl font-bold text-white mb-2">{videos[0].name}</h3>
-              <p className="text-gray-300">{videos[0].testimonial}</p>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Video Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {videos.slice(1).map((video, index) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="group cursor-pointer"
-            >
-              <div className="relative aspect-video bg-gray-700 rounded-2xl overflow-hidden shadow-lg">
-                {playingId === video.id ? (
-                  <video
-                    src={video.videoUrl}
-                    controls
-                    autoPlay
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <img
-                      src={video.thumbnail || video.videoUrl}
-                      alt={video.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div
-                      className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-50 transition-all"
-                      onClick={() => setPlayingId(video.id)}
-                    >
-                      <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
-                        <Play className="w-6 h-6 text-white fill-white ml-1" />
-                      </div>
+            {/* ✅ NEW: Video Testimonials Section - Slider */}
+            <section id="testimonials" className="py-24 bg-gradient-to-br from-gray-900 to-gray-800">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
+                            Watch Their <span className="text-yellow-400">Success Stories</span>
+                        </h2>
+                        <p className="text-xl text-gray-300">See how contributors are transforming communities</p>
                     </div>
-                  </>
-                )}
-                <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                  {video.duration || '0:00'}
+
+                    {videos.length > 0 && (
+                        <Swiper
+                            modules={[Autoplay, Pagination]}
+                            spaceBetween={30}
+                            slidesPerView={1}
+                            autoplay={{
+                                delay: 5000,
+                                disableOnInteraction: false,
+                            }}
+                            pagination={{
+                                clickable: true,
+                                bulletActiveClass: 'swiper-pagination-bullet-active !bg-yellow-400',
+                            }}
+                            loop={true}
+                            className="video-testimonials-swiper"
+                            onSwiper={(swiper) => {
+                                swiperRef.current = swiper;
+                            }}
+                            onSlideChange={(swiper) => {
+                                // Stop all videos
+                                Object.values(videoRefs.current).forEach((video) => {
+                                    if (video && !video.paused) {
+                                        video.pause();
+                                        video.currentTime = 0;
+                                    }
+                                });
+
+                                // Get active slide index (real index handles loop mode)
+                                const activeIndex = swiper.realIndex;
+                                const activeVideo = videos[activeIndex];
+
+                                if (activeVideo) {
+                                    setPlayingId(activeVideo.id);
+
+                                    // Pause Swiper autoplay while video plays
+                                    swiperRef.current?.autoplay?.stop();
+                                }
+                            }}
+                        >
+                            {/* <div className="flex justify-center items-center mt-4 gap-4">
+                                <button
+                                    onClick={() => {
+                                        swiperRef.current?.slidePrev();
+                                        // stop autoplay while video changes
+                                        Object.values(videoRefs.current).forEach((video) => {
+                                            if (video && !video.paused) {
+                                                video.pause();
+                                                video.currentTime = 0;
+                                            }
+                                        });
+                                    }}
+                                    className="bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                                >
+                                    &lt;
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        swiperRef.current?.slideNext();
+                                        // stop autoplay while video changes
+                                        Object.values(videoRefs.current).forEach((video) => {
+                                            if (video && !video.paused) {
+                                                video.pause();
+                                                video.currentTime = 0;
+                                            }
+                                        });
+                                    }}
+                                    className="bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                                >
+                                    &gt;
+                                </button>
+                            </div> */}
+
+                            {videos.map((video) => (
+                                <SwiperSlide key={video.id}>
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        className="pb-12"
+                                    >
+                                        <div className="relative aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl">
+                                            {playingId === video.id ? (
+                                                <video
+                                                    ref={(el) => (videoRefs.current[video.id] = el)}
+                                                    src={video.videoUrl}
+                                                    controls
+                                                    autoPlay
+                                                    muted
+                                                    onClick={(e) => {
+                                                        e.currentTarget.muted = false;
+                                                    }}
+                                                    className="w-full h-full object-cover"
+                                                    onEnded={() => {
+                                                        setPlayingId(null);
+                                                        swiperRef.current?.autoplay?.start();
+                                                        swiperRef.current?.slideNext();
+                                                    }}
+                                                />
+                                            ) : (
+                                                <>
+                                                    <img
+                                                        src={video.thumbnail || video.videoUrl}
+                                                        alt={video.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <div
+                                                        className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/30 transition"
+                                                        onClick={() => {
+                                                            // one-video-only rule
+                                                            Object.values(videoRefs.current).forEach((v) => {
+                                                                if (v && !v.paused) {
+                                                                    v.pause();
+                                                                    v.currentTime = 0;
+                                                                }
+                                                            });
+                                                            setPlayingId(video.id);
+                                                            swiperRef.current?.autoplay?.stop();
+                                                        }}
+                                                    >
+                                                        <div className="w-24 h-24 bg-yellow-500 rounded-full flex items-center justify-center shadow-2xl">
+                                                            <Play className="w-12 h-12 text-white fill-white ml-2" />
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <div className="mt-6 text-center">
+                                            <h3 className="text-2xl font-bold text-white mb-2">
+                                                {video.name}
+                                            </h3>
+                                            {video.role && (
+                                                <p className="text-yellow-400 text-sm mb-2">
+                                                    {video.role}
+                                                </p>
+                                            )}
+                                            <p className="text-gray-300">
+                                                {video.testimonial}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    )}
+
                 </div>
-              </div>
-              <h4 className="mt-3 text-white font-semibold">{video.name}</h4>
-              <p className="text-gray-400 text-sm">{video.role}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+                <style>{`
+                    .video-testimonials-swiper .swiper-pagination {
+                        bottom: 0 !important;
+                    }
+                    .video-testimonials-swiper .swiper-pagination-bullet {
+                        background: rgba(255, 255, 255, 0.5);
+                        width: 12px;
+                        height: 12px;
+                    }
+                    .video-nav-btn {
+                        @apply bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300;
+                    }
+                `}</style>
+            </section>
 
             {/* Enhanced Footer */}
             <footer className="bg-[#1a2332] text-white">
