@@ -1,20 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import ServicesGrid from "@/Components/ServicesGrid";
 import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/pagination'
-import ServicesGrid from "@/Components/ServicesGrid";
-
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 export default function Welcome({ videos }) {
     const [playingId, setPlayingId] = useState(null);
+    const { all_services } = usePage().props;
     const videoRefs = useRef({});
     const swiperRef = useRef(null);
-
-    const { all_services } = usePage().props;
 
     const contributors = [
         {
@@ -261,7 +259,7 @@ export default function Welcome({ videos }) {
                         </div>
 
                         {/* Stats Section */}
-                        {/* <div className="grid grid-cols-3 gap-8 mt-12 w-full max-w-2xl">
+                        <div className="grid grid-cols-3 gap-8 mt-12 w-full max-w-2xl">
                             <div className="text-center">
                                 <div className="text-3xl md:text-4xl font-bold text-[#f4c430]">1000+</div>
                                 <div className="text-sm text-gray-300 mt-1">Projects Done</div>
@@ -274,7 +272,7 @@ export default function Welcome({ videos }) {
                                 <div className="text-3xl md:text-4xl font-bold text-[#f4c430]">98%</div>
                                 <div className="text-sm text-gray-300 mt-1">Satisfaction</div>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -357,15 +355,15 @@ export default function Welcome({ videos }) {
                         ))}
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
-                        {/* RIGHT – Dynamic Services */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 40 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            >
-                            <ServicesGrid services={all_services} />
-                        </motion.div>
-                    <div/>
+                    {/* RIGHT – Dynamic Services */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <ServicesGrid services={all_services} />
+                    </motion.div>
+                    <div />
                 </div>
             </section>
 
@@ -407,13 +405,19 @@ export default function Welcome({ videos }) {
                 </div>
             </section>
             {/* ✅ NEW: Video Testimonials Section - Slider */}
-            <section id="testimonials" className="py-24 bg-gradient-to-br from-gray-900 to-gray-800">
+            <section
+                id="testimonials"
+                className="py-24 bg-gradient-to-br from-gray-900 to-gray-800"
+            >
                 <div className="max-w-6xl mx-auto px-6">
+                    {/* Section Header */}
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
                             Watch Their <span className="text-yellow-400">Success Stories</span>
                         </h2>
-                        <p className="text-xl text-gray-300">See how contributors are transforming communities</p>
+                        <p className="text-xl text-gray-300">
+                            See how contributors are transforming communities
+                        </p>
                     </div>
 
                     {videos.length > 0 && (
@@ -446,49 +450,14 @@ export default function Welcome({ videos }) {
                                 // Get active slide index (real index handles loop mode)
                                 const activeIndex = swiper.realIndex;
                                 const activeVideo = videos[activeIndex];
-
                                 if (activeVideo) {
                                     setPlayingId(activeVideo.id);
-
                                     // Pause Swiper autoplay while video plays
                                     swiperRef.current?.autoplay?.stop();
                                 }
                             }}
                         >
-                            {/* <div className="flex justify-center items-center mt-4 gap-4">
-                                <button
-                                    onClick={() => {
-                                        swiperRef.current?.slidePrev();
-                                        // stop autoplay while video changes
-                                        Object.values(videoRefs.current).forEach((video) => {
-                                            if (video && !video.paused) {
-                                                video.pause();
-                                                video.currentTime = 0;
-                                            }
-                                        });
-                                    }}
-                                    className="bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center"
-                                >
-                                    &lt;
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        swiperRef.current?.slideNext();
-                                        // stop autoplay while video changes
-                                        Object.values(videoRefs.current).forEach((video) => {
-                                            if (video && !video.paused) {
-                                                video.pause();
-                                                video.currentTime = 0;
-                                            }
-                                        });
-                                    }}
-                                    className="bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center"
-                                >
-                                    &gt;
-                                </button>
-                            </div> */}
-
+                            {/* Video Slides */}
                             {videos.map((video) => (
                                 <SwiperSlide key={video.id}>
                                     <motion.div
@@ -543,40 +512,41 @@ export default function Welcome({ videos }) {
                                             )}
                                         </div>
 
+                                        {/* Video Details */}
                                         <div className="mt-6 text-center">
                                             <h3 className="text-2xl font-bold text-white mb-2">
                                                 {video.name}
                                             </h3>
                                             {video.role && (
-                                                <p className="text-yellow-400 text-sm mb-2">
-                                                    {video.role}
-                                                </p>
+                                                <p className="text-yellow-400 text-sm mb-2">{video.role}</p>
                                             )}
-                                            <p className="text-gray-300">
-                                                {video.testimonial}
-                                            </p>
+                                            <p className="text-gray-300">{video.testimonial}</p>
                                         </div>
                                     </motion.div>
                                 </SwiperSlide>
                             ))}
                         </Swiper>
                     )}
-
                 </div>
-                <style>{`
-                    .video-testimonials-swiper .swiper-pagination {
-                        bottom: 0 !important;
-                    }
-                    .video-testimonials-swiper .swiper-pagination-bullet {
-                        background: rgba(255, 255, 255, 0.5);
-                        width: 12px;
-                        height: 12px;
-                    }
-                    .video-nav-btn {
-                        @apply bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300;
-                    }
-                `}</style>
+
+                <style>
+                    {`
+                        .video-testimonials-swiper .swiper-pagination {
+                            bottom: 0 !important;
+                        }
+                        .video-testimonials-swiper .swiper-pagination-bullet {
+                            background: rgba(255, 255, 255, 0.5);
+                            width: 12px;
+                            height: 12px;
+                        }
+                        .video-nav-btn {
+                            @apply bg-gray-700/50 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300;
+                        }
+                    `}
+                </style>
             </section>
+
+
 
             {/* Enhanced Footer */}
             <footer className="bg-[#1a2332] text-white">
