@@ -6,12 +6,15 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import ServicesGrid from "@/Components/ServicesGrid";
+
 
 export default function Welcome({ videos }) {
     const [playingId, setPlayingId] = useState(null);
     const videoRefs = useRef({});
     const swiperRef = useRef(null);
 
+    const { all_services } = usePage().props;
 
     const contributors = [
         {
@@ -353,6 +356,16 @@ export default function Welcome({ videos }) {
                             </motion.div>
                         ))}
                     </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+                        {/* RIGHT – Dynamic Services */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6 }}
+                            >
+                            <ServicesGrid services={all_services} />
+                        </motion.div>
+                    <div/>
                 </div>
             </section>
 

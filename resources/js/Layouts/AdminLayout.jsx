@@ -8,7 +8,8 @@ import {
   CalendarDaysIcon,
   UserIcon,
   CheckCircleIcon,
-  ClockIcon
+  ClockIcon,
+  MapPinIcon
 } from '@heroicons/react/24/outline';
 import { VideoIcon } from 'lucide-react';
 
@@ -23,6 +24,7 @@ export default function AdminLayout({ header, children }) {
       "admin.subcateg": "Sub Category",
       "manage.appointment": "Manage Appointment",
       "appointment.clientBooked": "Client Requests",
+      "admin.tracker": "Request Tracker",
     };
 
     const computedHeader = headers[routeName] ?? header;
@@ -108,6 +110,10 @@ export default function AdminLayout({ header, children }) {
             <UserIcon className="w-5 h-5" />
             <span>Client Requests</span>
           </NavLink> */}
+          <NavLink href={route('admin.tracker')} className="flex items-center space-x-2">
+            <MapPinIcon className="w-5 h-5" />
+            <span>Request Tracker</span>
+          </NavLink> <br />
           <NavLink href={route('video-testimonials.index')} className="flex items-center space-x-2">
             <VideoIcon className="w-5 h-5" />
             <span> Manage Video Testimonials</span>

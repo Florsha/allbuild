@@ -9,8 +9,10 @@ use App\Http\Controllers\VideoTestimonialController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IDVerificationController;
-use App\Http\Controllers\Admin\AdminController; 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\TrackingController;
 use App\Models\VideoTestimonial;
+use App\Models\services;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -29,12 +31,15 @@ Route::get('/', function () {
         ];
     });
 
+    $all_services = services::all();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
         'videos' => $videos,
+        'all_services' => $all_services,
     ]);
 });
 
@@ -100,6 +105,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::put('admin/clientBooked/updateStatus/{id}', [AdminController::class, 'saveTracking'])->name('admin.clientBooked.updateStatus');
 
+        Route::get('admin/tracker', [TrackingController::class, 'adminIndex'])->name('admin.tracker');
+        Route::get('admin/tracker/detail', [TrackingController::class, 'adminDetail'])->name('admin.tracker.detail');
+
         Route::resource('video-testimonials', VideoTestimonialController::class);
 
 
@@ -110,6 +118,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/id-verification', [IDVerificationController::class, 'index'])->name('id.verification');
 Route::post('/id-verification/process', [IDVerificationController::class, 'process'])->name('id.verification.process');
+Route::get('/tracking', [TrackingController::class, 'index'])->name('tracker.index');
+
 
 
 

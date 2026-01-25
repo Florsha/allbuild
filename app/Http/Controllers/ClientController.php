@@ -18,7 +18,7 @@ class ClientController extends Controller
     //
     public function client(Request $request): Response
     {
-
+        $user = auth()->user();
         $services = services::all();
         $subcateg = subcategory::select('id','title')->get();
         $client_assign = ClientAssign::get();
@@ -28,7 +28,8 @@ class ClientController extends Controller
             "client_assign_slot" => $client_assign,
             "all_services" => $services,
             "services_offer" => $subcateg,
-            'manage_appointment' => $manage_appointment 
+            'manage_appointment' => $manage_appointment,
+            'user'=> $user 
         ]);
 
     }
