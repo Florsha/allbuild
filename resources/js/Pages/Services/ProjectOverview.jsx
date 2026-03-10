@@ -1,7 +1,6 @@
 export default function ProjectOverview({ service, allcategories = [], selectedCategory, onCategorySelect }) {
   if (!service) return null; // nothing to show until service is passed
-  console.log("allcategories::", allcategories);
-  console.log("selectedCategory::", selectedCategory);
+
  return (
     <div className="space-y-4">
       <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -12,12 +11,11 @@ export default function ProjectOverview({ service, allcategories = [], selectedC
       {/* Categories */}
       <div>
         <h4 className="text-lg font-semibold text-gray-800 mb-3">
-          Select a Category
+          Select a Category 
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {allcategories.map((cat) => {
             const isActive = selectedCategory === cat.id;
-            
             return (
               <button
                 key={cat.id}

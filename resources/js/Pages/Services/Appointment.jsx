@@ -90,7 +90,7 @@ const renderCalendarDays = () => {
       const slotsForDate = manageAppointments.filter(a => {
         return a.effective_date === fullDate;
       });
-
+      console.log("fullDate Slot", slotsForDate);
       // No slots = no color
       if (slotsForDate.length > 0) {
         const allFull = slotsForDate.every(slot => {
@@ -111,7 +111,7 @@ const renderCalendarDays = () => {
           const slotDT = new Date(`${slot.effective_date}T${slot.time}`);
           return slotDT > now;
         });
-
+        
         if (upcomingSlots.length > 0) {
           isAvailable = true;
         } else {

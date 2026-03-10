@@ -457,14 +457,14 @@ console.log("my statusessss", requestType);
                           onClick={() => confirmStatusUpdate("accepted", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Accepted
+                          Accept
                         </button>
 
                         <button
                           onClick={() => confirmStatusUpdate("cancelled", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Cancelled
+                          Cancel
                         </button>
                       </>
                     ) : requestType.includes(reqApproved) ? (
@@ -482,7 +482,7 @@ console.log("my statusessss", requestType);
                           onClick={() => confirmStatusUpdate("completed", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Completed
+                          Complete
                         </button>
 
                     ) : requestType.includes(reqAccepted) ? (
@@ -491,14 +491,14 @@ console.log("my statusessss", requestType);
                           onClick={() => confirmStatusUpdate("approved", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Approved
+                          Approve
                         </button>
 
                         <button
                           onClick={() => confirmStatusUpdate("rejected", selectedClient.reference_number)}
                           className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex-1 sm:flex-none"
                         >
-                          Rejected
+                          Reject
                         </button>
                       </>
                     ) : requestType.includes(finished) ? (
@@ -507,7 +507,7 @@ console.log("my statusessss", requestType);
                           className="px-6 py-2 rounded-lg bg-gray-300 text-gray-600 font-medium cursor-not-allowed flex items-center gap-2"
                         >
                           <i className="fa fa-check"></i>
-                          Finished
+                          Finish
                         </button>
                     ) : requestType.includes(rejected) ? (
                         <button
@@ -515,7 +515,7 @@ console.log("my statusessss", requestType);
                           className="px-6 py-2 rounded-lg bg-red-100 text-red-700 font-semibold cursor-not-allowed flex items-center gap-2"
                         >
                           <i className="fa fa-times-circle"></i>
-                          Rejected
+                          Reject
                         </button>
                     )
                     

@@ -2,11 +2,40 @@ import React, { useEffect, useState} from "react";
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import ServicesGrid from "@/Components/ServicesGrid";
+import ServiceRequestModal from "@/Components/ServiceRequestModal";
 import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play} from 'lucide-react';
+
+import {
+  WrenchScrewdriverIcon,
+  BuildingOffice2Icon,
+  HomeModernIcon,
+  PuzzlePieceIcon,
+  TruckIcon,
+  BeakerIcon
+} from "@heroicons/react/24/outline";
 
 export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
     const [playingId, setPlayingId] = useState(null);
-    const { all_services } = usePage().props;
+    const { all_services, services_offer, manage_appointment, client_assign_slot } = usePage().props;
+    const [activeService, setActiveService] = useState(null);
+    console.log("", activeService)
+
+    const iconMap = {
+    Renovation: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
+    "New Construction": <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
+    "Repair & Maintenance": <WrenchScrewdriverIcon className="w-12 h-12 text-yellow-400" />,
+    "Other Services": <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+  };
+
+   // Dynamic services from backend
+  const allservices = all_services.map((service) => ({
+    id: service.id,
+    title: service.title,
+    description: service.description,
+    details: service.details,
+    image: service.image ?? "https://via.placeholder.com/400x300?text=No+Image", // fallback image
+    icon: iconMap[service.title] || <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
+  }));
 
     const contributors = [
         {
@@ -323,41 +352,37 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
             </section>
 
             {/* Services Section */}
-            <section id="services" className="px-6 py-24 bg-white">
+           <section id="services" className="px-6 py-24 bg-white">
                 <div className="max-w-6xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">Our Services</h2>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {[
-                            { title: 'Consultation', desc: 'Get expert advice on project planning and management.', icon: '💬' },
-                            { title: 'Project Management', desc: 'Comprehensive oversight from start to finish.', icon: '📋' },
-                            { title: 'Construction', desc: 'Access verified contractors for all types of builds.', icon: '🏗️' },
-                            { title: 'Quality Assurance', desc: 'Ensuring top-quality results every time.', icon: '⭐' },
-                            { title: 'Support', desc: 'Dedicated team to help you along the way.', icon: '🤝' },
-                            { title: 'Innovation', desc: 'Modern solutions for every project need.', icon: '⚙️' },
-                        ].map((s, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                className="p-8 bg-gradient-to-br from-gray-50 to-yellow-50 rounded-3xl shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
-                            >
-                                <div className="text-5xl mb-4">{s.icon}</div>
-                                <h3 className="text-2xl font-semibold mb-2 text-gray-900">{s.title}</h3>
-                                <p className="text-gray-600">{s.desc}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
-                        {/* RIGHT – Dynamic Services */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 40 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            >
-                            <ServicesGrid services={all_services} />
-                        </motion.div>
-                    <div/>
+                    <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">
+                    Choose Our Services
+                    </h2>
+
+                    {/* Services Grid */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        >
+                        <ServicesGrid
+                        services={allservices}
+                        showSelect
+                        onSelect={(service) => setActiveService(service)}
+                        />
+
+                        {/* Modal */}
+                        {activeService && (
+                        <ServiceRequestModal
+                            manageAppointments={manage_appointment}
+                            client_assign_slot = {client_assign_slot}
+                            service={activeService}
+                            allcategories={services_offer}
+                            isAuthenticated={false}
+                            onClose={() => setActiveService(null)}
+                        />
+                        )}
+
+                    </motion.div>
                 </div>
             </section>
 

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { usePage,Head, router } from "@inertiajs/react";
+import ServicesGrid from "@/Components/ServicesGrid";
+import ServiceRequestModal from "@/Components/ServiceRequestModal";
+
 import {
   WrenchScrewdriverIcon,
   BuildingOffice2Icon,
@@ -19,6 +22,8 @@ export default function Services() {
   const [activeModal, setActiveModal] = useState(null);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
+   const [activeService, setActiveService] = useState(null);
+   
   const { all_services, services_offer, manage_appointment, flash, client_assign_slot, user } = usePage().props;
   const [showFlash, setShowFlash] = useState(!!flash?.success);
   const [formData, setFormData] = useState({
@@ -37,79 +42,24 @@ export default function Services() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const handleCategorySelect = (catId) => {
-    console.log("Cat Id", catId);
-     setFormData(prev => ({ ...prev, category: catId }));
-      setSelectedCategory(catId);
-  }
+  useEffect(() => {
+    if (flash?.success) {
+        setShowFlash(true);
 
-  const handleNext = () => {
-    // Step 2 validation
-    if (step === 2) {
-      if (!formData.description || formData.description.trim() === "") {
-        setErrors({ description: "Project description is required" });
-        return; // STOP here
-      }
+        // Play alert sound
+        const audio = new Audio("/sounds/notify.mp3"); // put your alert sound in public/sounds/
+        audio.play();
+
+        // Auto-close after 5 seconds
+        const timer = setTimeout(() => {
+            setShowFlash(false);
+        }, 5000);
+
+        return () => clearTimeout(timer);
     }
+  }, [flash?.success]);
 
-    if (step === 3 && (!formData.appointment || formData.appointment.length === 0)) {
-      setErrors(prev => ({ ...prev, appointment: "You must select an appointment before proceeding." }));
-      return;
-    }
-
-    // clear errors when valid
-    setErrors({});
-    setStep(step + 1);
-  };
-
-  // const services = [
-  //   {
-  //     key: "renovation",
-  //     title: "Renovation",
-  //     description:
-  //       "Give your space a fresh new look. From kitchens to offices, we bring modern upgrades to life.",
-  //     icon: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
-  //     image:
-  //       "https://cdn.prod.website-files.com/642c021ff5e1407cd1335eaf/64492986462df701b91ad74d_House%20Renovation%20Feature.jpg",
-  //     details:
-  //       "Our renovation service covers small adjustments to major overhauls. Ideal for refreshing spaces while keeping existing structures.",
-  //   },
-  //   {
-  //     key: "construction",
-  //     title: "New Construction",
-  //     description:
-  //       "We manage entire construction projects from foundation to finishing, with quality you can trust.",
-  //     icon: <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
-  //     image:
-  //       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  //     details:
-  //       "From planning to completion, our new construction service ensures high standards, durable structures, and modern designs.",
-  //   },
-  //   {
-  //     key: "repair",
-  //     title: "Repair & Maintenance",
-  //     description:
-  //       "Reliable and efficient repair solutions for houses, apartments, and commercial buildings.",
-  //     icon: <WrenchScrewdriverIcon className="w-12 h-12 text-yellow-400" />,
-  //     image:
-  //       "https://www.unitedintoman.com/wp-content/uploads/2022/10/4-1.jpg",
-  //     details:
-  //       "Quick, reliable repairs and ongoing maintenance to keep your property in top shape.",
-  //   },
-  //   {
-  //     key: "services",
-  //     title: "Other Services",
-  //     description:
-  //       "Specialized solutions tailored to your unique needs, including design, landscaping, and custom projects.",
-  //     icon: <PuzzlePieceIcon className="w-12 h-12 text-yellow-400" />,
-  //     image:
-  //       "https://images.unsplash.com/photo-1600585154084-4e5fe7c1c7e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  //     details:
-  //       "Our other services include interior design consultation, landscaping, painting, electrical work, plumbing, and customized construction requests. Perfect for clients looking for tailored solutions to complete their project.",
-  //   },
-  // ];
-
-    // Map service titles to icons (optional)
+  // Map service titles to icons (optional)
   const iconMap = {
     Renovation: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
     "New Construction": <BuildingOffice2Icon className="w-12 h-12 text-yellow-400" />,
@@ -147,55 +97,6 @@ export default function Services() {
     setStep(1);
   };
 
-  useEffect(() => {
-    if (flash?.success) {
-        setShowFlash(true);
-
-        // Play alert sound
-        const audio = new Audio("/sounds/notify.mp3"); // put your alert sound in public/sounds/
-        audio.play();
-
-        // Auto-close after 5 seconds
-        const timer = setTimeout(() => {
-            setShowFlash(false);
-        }, 5000);
-
-        return () => clearTimeout(timer);
-    }
-}, [flash?.success]);
-
-  const handleSubmit = () => {
-    console.log("Submitting...", formData);
-    
-    setIsSubmitting(true);
-    router.post('/services-request', formData, {
-      onSuccess: () => {
-        setActiveModal(null);
-            setStep(1);
-            setSelectedCategory(null);
-
-            setFormData({
-              services_id: null,
-              category: null,
-              description: "",
-              file: null,
-              appointment: null,
-              location: {
-                lat: null,
-                lng: null,
-                address: ""
-              }
-            });
-
-            setIsSubmitting(false);
-        },
-        onError: () => {
-      setIsSubmitting(false); // ❌ HIDE LOADER EVEN ON ERROR
-    }
-    })
-    
-  }
-
   return (
     <AuthenticatedLayout>
       <Head title="Services" />
@@ -222,206 +123,26 @@ export default function Services() {
               Choose Your Service
             </h2>
           )}
-         
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {allservices.map((service) => (
-              <div
-                key={service.id}
-                className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white"
-              >
-                <div
-                  // className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500"
-                    className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500 blur-sm"
-                  style={{ backgroundImage: `url(/storage/${service.image})` }}
-                ></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent transition-all"></div>
 
-                <div className="relative z-10 p-8 text-center flex flex-col items-center justify-center h-full space-y-4">
-                  <div className="transform group-hover:scale-110 transition duration-300">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-2xl font-bold text-white drop-shadow-md">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-200 text-sm leading-relaxed max-w-xs">
-                    {service.description}
-                  </p>
-                  <button
-                     onClick={() => {
-                        setActiveModal(service.id);
-                        setFormData((prev) => ({
-                          ...prev,
-                          services_id: service.id
-                        }));
-                      }}
-                    className="mt-5 bg-yellow-400 text-gray-900 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 shadow-md hover:shadow-lg transition"
-                  >
-                    Select
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ServicesGrid
+            services={allservices}
+            showSelect
+            onSelect={(service) => setActiveService(service)}
+          />
+
+          {activeService && (
+            <ServiceRequestModal
+              manageAppointments={manage_appointment}
+              client_assign_slot={client_assign_slot}
+              service={activeService}
+              allcategories={services_offer}
+              isAuthenticated={user}
+              onClose={() => setActiveService(null)}
+            />
+          )}
+
         </div>
       </section>
-
-      {/* MODAL */}
-      {activeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6 animate-fadeIn">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100">
-            <div className="relative h-56 md:h-72 w-full">
-              <img
-                src={
-                  allservices.find((s) => s.id === activeModal)?.image
-                      ? `/storage/${allservices.find((s) => s.id === activeModal).image}`
-                      : "https://via.placeholder.com/800"
-                  }
-                alt="Service"
-                className="w-full h-full object-cover rounded-t-3xl"
-              />
-              <button
-                onClick={() => {
-                  setActiveModal(null);
-                  setStep(1);
-                  setSelectedCategory(null);
-                }}
-                className="absolute top-3 right-3 bg-white/90 hover:bg-red-500 hover:text-white rounded-full p-2 shadow-lg transition"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-8 md:p-10 space-y-8">
-              {!selectedCategory ? (
-                <>
-                  {allservices
-                    .filter((s) => s.id === activeModal)
-                    .map((s) => (
-                      <div key={s.id} className="space-y-5">
-                        <h3 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                          {s.icon} {s.title}
-                        </h3>
-                        <p className="text-gray-600 leading-relaxed text-lg">
-                          {s.details}
-                        </p>
-
-                        <div>
-                          <h4 className="text-xl font-semibold text-gray-800 mb-4">
-                            Select a Category
-                          </h4>
-                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            {allcategories && allcategories.length > 0 ? (
-                              allcategories.map((cat) => (
-                               <button
-                                  key={cat.id}
-                                  onClick={() => handleCategoryClick(cat.id)}
-                                  className="group px-4 py-3 text-sm font-medium border border-gray-200 rounded-xl 
-                                            bg-gray-50 hover:bg-yellow-400 hover:text-white hover:border-yellow-500 
-                                            transition duration-200 shadow-sm flex items-center justify-center gap-2"
-                                >
-                                  {cat.icon}
-                                  <span>{cat.title}</span>
-                                </button>
-                              ))
-                            ) : (
-                              <p className="col-span-full text-gray-500 text-sm">No categories available</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                </>
-              ) : (
-                <>
-                  {/* STEPPER */}
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex gap-3">
-                      {[1, 2, 3, 4].map((n) => (
-                        <span
-                          key={n}
-                          className={`w-9 h-9 flex items-center justify-center rounded-full font-bold text-sm transition ${
-                            step === n
-                              ? "bg-yellow-400 text-gray-900 scale-110 shadow"
-                              : "bg-gray-200 text-gray-600"
-                          }`}
-                        >
-                          {n}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="text-sm font-medium text-gray-500">
-                      {selectedCategory} Project
-                    </span>
-                  </div>
-
-                  {/* FORMS */}
-                  {step === 1 && (
-                    <ProjectOverview
-                      service={allservices.find((s) => s.id === activeModal)}
-                      allcategories={allcategories}
-                      selectedCategory={selectedCategory}
-                      onCategorySelect={handleCategorySelect}
-                    />
-                  )}
-                  {step === 2 && <ClientInfo
-                    description={formData.description}
-                    fileBluePrint = {formData.file}
-                    error={errors.description}
-                    onDescriptionChange={(val) =>
-                      setFormData(prev => ({ ...prev, description: val }))
-                    }
-                    onFileChange={(val) => 
-                       setFormData(prev => ({ ...prev, file: val }))
-                    }
-                  />}
-                  {step === 3 && <Appointment  error={errors.appointment} client_slot={client_assign_slot} manageAppointments={manage_appointment}
-                    onAppointmentChange={(val) =>
-                      setFormData(prev => ({ ...prev, appointment: val }))
-                    }
-                  />}
-                  {step === 4 && <Location 
-                     onLocationChange={(locationObj) =>
-                        setFormData(prev => ({ ...prev, location: locationObj }))
-                      }
-                  />}
-
-                  {/* NAVIGATION BUTTONS */}
-                  <div className="flex justify-between mt-10">
-                    {step > 1 && (
-                      <button
-                        onClick={() => setStep(step - 1)}
-                        className="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-medium transition"
-                      >
-                        Back
-                      </button>
-                    )}
-                    {step < 4 ? (
-                      <button
-                        onClick={handleNext}
-                        className={`ml-auto px-6 py-2 font-semibold rounded-lg transition
-                          ${
-                            step === 2 && (!formData.description || formData.description.trim() === "") || (step === 3 && (!formData.appointment))
-                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                              : "bg-yellow-400 text-gray-900 hover:bg-yellow-500"
-                          }`}
-                      >
-                        Next
-                      </button>
-                    ) : (
-                      <button
-                        onClick={handleSubmit}
-                        className="ml-auto px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold transition"
-                      >
-                        Submit
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* CTA SECTION */}
       <section className="bg-yellow-400 text-gray-900 py-16 text-center">
@@ -455,20 +176,6 @@ export default function Services() {
               </svg>
               <span>{flash.success}</span>
           </div>
-      )}
-
-      {isSubmitting && (
-        <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            {/* Spinner */}
-            <div className="w-14 h-14 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-
-            {/* Text */}
-            <p className="text-white text-lg font-semibold">
-              Submitting request...
-            </p>
-          </div>
-        </div>
       )}
 
     </AuthenticatedLayout>

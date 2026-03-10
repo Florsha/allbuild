@@ -12,7 +12,10 @@ use App\Http\Controllers\IDVerificationController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\TrackingController;
 use App\Models\VideoTestimonial;
+use App\Models\ManageAppointment;
 use App\Models\services;
+use App\Models\ClientAssign;
+use App\Models\subcategory;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -31,7 +34,10 @@ Route::get('/', function () {
         ];
     });
 
+    $manage_appointment = ManageAppointment::with('user:id,name')->get();
     $all_services = services::all();
+    $subcateg = subcategory::select('id','title')->get();
+    $client_assign = ClientAssign::get();
 
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -40,6 +46,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
         'videos' => $videos,
         'all_services' => $all_services,
+        "services_offer" => $subcateg,
+        "manage_appointment" => $manage_appointment,
+        "client_assign_slot" => $client_assign,
     ]);
 });
 
