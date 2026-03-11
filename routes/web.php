@@ -114,6 +114,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::put('admin/clientBooked/updateStatus/{id}', [AdminController::class, 'saveTracking'])->name('admin.clientBooked.updateStatus');
 
+        Route::get('admin/tracker', [TrackingController::class, 'adminIndex'])->name('admin.tracker');
+        Route::get('admin/tracker/detail', [TrackingController::class, 'adminDetail'])->name('admin.tracker.detail');
+
         Route::resource('video-testimonials', VideoTestimonialController::class);
 
 
@@ -124,7 +127,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/id-verification', [IDVerificationController::class, 'index'])->name('id.verification');
 Route::post('/id-verification/process', [IDVerificationController::class, 'process'])->name('id.verification.process');
-Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
+Route::get('/tracking', [TrackingController::class, 'index'])->name('tracker.index');
 
 
 
