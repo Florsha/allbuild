@@ -24,7 +24,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
     const [activeService, setActiveService] = useState(null);
     const videoRefs = useRef({});
     const swiperRef = useRef(null);
-    console.log("", activeService)
 
     const iconMap = {
     Renovation: <HomeModernIcon className="w-12 h-12 text-yellow-400" />,
