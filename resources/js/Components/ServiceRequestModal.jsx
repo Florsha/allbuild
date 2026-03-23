@@ -4,6 +4,8 @@ import ProjectOverview from "../Pages/Services/ProjectOverview";
 import ClientInfo from "../Pages/Services/ClientInfo";
 import Appointment from "../Pages/Services/Appointment";
 import Location from "../Pages/Services/Location";
+import RegisterModal from "./RegisterModal";
+import LoginModal from "./LoginModal";
 
 export default function ServiceRequestModal({
   manageAppointments,
@@ -81,7 +83,7 @@ export default function ServiceRequestModal({
     })
     
   }
-
+console.log(activeModal)
 
   return (
     <>
@@ -167,14 +169,21 @@ export default function ServiceRequestModal({
                     Submit Request
                   </button>
                 ) : (
-                  <div className="flex gap-3 ml-auto">
-                    <a href={route('login')} className="bg-gray-200 px-5 py-2 rounded-lg">
-                      Login
-                    </a>
-                    <a href={route('register')} className="bg-yellow-400 px-5 py-2 rounded-lg">
-                      Register
-                    </a>
-                  </div>
+                 <div className="flex gap-3 ml-auto">
+                  <button
+                    onClick={() => setActiveModal("login")}
+                    className="bg-gray-200 px-5 py-2 rounded-lg"
+                  >
+                    Login
+                  </button>
+
+                  <button
+                    onClick={() => setActiveModal("register")}
+                    className="bg-yellow-400 px-5 py-2 rounded-lg"
+                  >
+                    Register
+                  </button>
+                </div>
                 )
               )}
             </div>
@@ -194,6 +203,28 @@ export default function ServiceRequestModal({
             </p>
           </div>
         </div>
+      )}
+      
+      {activeModal === "login" && (
+        <LoginModal
+          isOpen={true} 
+          onClose={() => setActiveModal(null)}
+          onSuccess={() => {
+            setActiveModal(null);
+            handleSubmit(); // auto-submit after login
+          }}
+        />
+      )}
+
+      {activeModal === "register" && (
+        <RegisterModal
+          isOpen={true} 
+          onClose={() => setActiveModal(null)}
+          onSuccess={() => {
+            setActiveModal(null);
+            handleSubmit(); // auto-submit after register
+          }}
+        />
       )}
     </>
   );
