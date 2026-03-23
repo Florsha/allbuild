@@ -3,6 +3,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import ServicesGrid from "@/Components/ServicesGrid";
 import ServiceRequestModal from "@/Components/ServiceRequestModal";
+import LoginModal from "@/Components/LoginModal";
+import RegisterModal from "@/Components/RegisterModal";
 import { ArrowRight, Shield, Users, Zap, Star, ThumbsUp, User, Play} from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
@@ -20,6 +22,8 @@ import {
 
 export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
     const [playingId, setPlayingId] = useState(null);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
     const { all_services, services_offer, manage_appointment, client_assign_slot } = usePage().props;
     const [activeService, setActiveService] = useState(null);
     const videoRefs = useRef({});
@@ -275,12 +279,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                             Securely find the right contractor for your needs. Connect with verified professionals and bring your construction dreams to life.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link
-                                href={route('login')}
+                            <button
+                                onClick={() => setShowLoginModal(true)}
                                 className="bg-[#f4c430] text-gray-900 font-bold rounded-full py-4 px-8 shadow-xl hover:shadow-2xl hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105"
                             >
                                 Get Started →
-                            </Link>
+                            </button>
                             <button className="bg-transparent border-2 border-white text-white font-bold rounded-full py-4 px-8 hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105">
                                 Learn More
                             </button>
@@ -653,6 +657,40 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                     </div>
                 </div>
             </footer>
+
+            {/* Auth Modals */}
+            <LoginModal 
+                isOpen={showLoginModal} 
+                onClose={() => setShowLoginModal(false)}
+                onSwitchToRegister={() => {
+                    setShowLoginModal(false);
+                    setShowRegisterModal(true);
+                }}
+            />
+            <RegisterModal 
+                isOpen={showRegisterModal} 
+                onClose={() => setShowRegisterModal(false)}
+                onSwitchToLogin={() => {
+                    setShowRegisterModal(false);
+                    setShowLoginModal(true);
+                }}
+            />
+
+            <style>{`
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+                .animate-fadeIn {
+                    animation: fadeIn 0.3s ease-out;
+                }
+            `}</style>
         </>
     );
 }
