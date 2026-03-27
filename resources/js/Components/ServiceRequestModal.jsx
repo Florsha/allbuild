@@ -53,11 +53,28 @@ export default function ServiceRequestModal({
     setStep(step + 1);
   };
 
-  const handleSubmit = () => {
+   const handleAuthAction = (modal) => {
+     sessionStorage.setItem('pendingServiceRequest', JSON.stringify(formData))
+     setActiveModal(modal);
+  }
+
+  // const handlePostAuthSubmit = () => {
+  //   const pending = sessionStorage.getItem('pendingServiceRequest');
+  //   if (pending) {
+  //     const savedData = JSON.parse(pending);
+  //     setActiveModal(null);
+  //     handleSubmit(savedData); // pass it directly
+  //   }
+  // };
+
+  const handleSubmit = (dataToSubmit = null) => {
+    const payload = dataToSubmit || formData;
     console.log("Submitting...", formData);
     setIsSubmitting(true);
-    router.post('/services-request', formData, {
+
+    router.post('/services-request', payload, {
       onSuccess: () => {
+        sessionStorage.removeItem('pendingServiceRequest');
         onClose();
             setStep(1);
             setSelectedCategory(null);
@@ -80,10 +97,20 @@ export default function ServiceRequestModal({
         onError: () => {
       setIsSubmitting(false); // ❌ HIDE LOADER EVEN ON ERROR
     }
-    })
-    
+    }) 
   }
-console.log(activeModal)
+  
+  //check if there's a pending request after returning from auth
+  useEffect(() => {
+    const pending = sessionStorage.getItem('pendingServiceRequest');
+    console.log("effect", pending);
+    if (pending && isAuthenticated) {
+      const savedData = JSON.parse(pending);
+      handleSubmit(savedData);
+    }
+  }, []);
+
+ console.log(activeModal)
 
   return (
     <>
@@ -171,14 +198,14 @@ console.log(activeModal)
                 ) : (
                  <div className="flex gap-3 ml-auto">
                   <button
-                    onClick={() => setActiveModal("login")}
+                    onClick={() => handleAuthAction("login")}
                     className="bg-gray-200 px-5 py-2 rounded-lg"
                   >
                     Login
                   </button>
 
                   <button
-                    onClick={() => setActiveModal("register")}
+                    onClick={() => handleAuthAction("register")}
                     className="bg-yellow-400 px-5 py-2 rounded-lg"
                   >
                     Register
@@ -210,8 +237,8 @@ console.log(activeModal)
           isOpen={true} 
           onClose={() => setActiveModal(null)}
           onSuccess={() => {
+            handleSubmit();
             setActiveModal(null);
-            handleSubmit(); // auto-submit after login
           }}
         />
       )}
@@ -221,8 +248,8 @@ console.log(activeModal)
           isOpen={true} 
           onClose={() => setActiveModal(null)}
           onSuccess={() => {
+            handleSubmit();
             setActiveModal(null);
-            handleSubmit(); // auto-submit after register
           }}
         />
       )}

@@ -9,7 +9,7 @@ import CustomAlert from '@/Components/CustomAlert';
 import IDVerificationModal from '@/Components/IDVerificationModal';
 import { useForm } from '@inertiajs/react';
 
-export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
+export default function LoginModal({ isOpen, onClose,onSuccess,onSwitchToRegister }) {
     const [alert, setAlert] = useState({
         isVisible: false,
         type: 'success',
@@ -45,9 +45,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
                 });
                 // Auto close modal after success
                 setTimeout(() => {
-                    onClose();
                     reset();
-                }, 2000);
+                    onSuccess?.(); 
+                }, 800); 
             },
             onError: (errors) => {
                 // Show the server error response

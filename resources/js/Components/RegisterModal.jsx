@@ -8,7 +8,7 @@ import CustomAlert from '@/Components/CustomAlert';
 import IDVerificationModal from '@/Components/IDVerificationModal';
 import { useForm } from '@inertiajs/react';
 
-export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
+export default function RegisterModal({ isOpen, onClose,onSuccess,onSwitchToLogin }) {
     const [alert, setAlert] = useState({
         isVisible: false,
         type: 'success',
@@ -54,8 +54,9 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                     message: 'Registration successful! Redirecting to your dashboard...',
                 });
                 setTimeout(() => {
-                    window.location.href = route('dashboard');
-                }, 2000);
+                   // window.location.href = route('dashboard');
+                   onSuccess?.();
+                }, 800);
             },
             onError: (errors) => {
                 // Collect all error messages from server
