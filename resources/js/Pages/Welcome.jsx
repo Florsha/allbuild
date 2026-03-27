@@ -339,25 +339,34 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
 
             {/* About Section */}
             <section id="about" className="relative py-24 bg-gradient-to-br from-gray-50 to-yellow-50">
-                <div className="max-w-6xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8">About Us</h2>
-                    <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                        At All Build Corp, our mission is to connect clients with trusted contractors quickly and securely, ensuring quality and confidence in every project.
-                    </p>
-                    <div className="mt-10 grid sm:grid-cols-3 gap-8">
-                        {[
-                            { label: 'Mission', desc: 'To provide a seamless client-contractor connection.', icon: '🎯' },
-                            { label: 'Vision', desc: 'To be the most trusted construction platform worldwide.', icon: '🔭' },
-                            { label: 'Goal', desc: 'Simplify selection while ensuring quality & reliability.', icon: '🏆' },
-                        ].map((item, i) => (
-                            <div key={i} className="bg-white p-8 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                                <div className="text-5xl mb-4">{item.icon}</div>
-                                <h3 className="text-2xl font-bold mb-2 text-yellow-600">{item.label}</h3>
-                                <p className="text-gray-700">{item.desc}</p>
-                            </div>
-                        ))}
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    >
+             
+                    <div className="max-w-6xl mx-auto px-6 text-center">
+                        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8">About Us</h2>
+                        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                            At All Build Corp, our mission is to connect clients with trusted contractors quickly and securely, ensuring quality and confidence in every project.
+                        </p>
+                        <div className="mt-10 grid sm:grid-cols-3 gap-8">
+                            {[
+                                { label: 'Mission', desc: 'To provide a seamless client-contractor connection.', icon: '🎯' },
+                                { label: 'Vision', desc: 'To be the most trusted construction platform worldwide.', icon: '🔭' },
+                                { label: 'Goal', desc: 'Simplify selection while ensuring quality & reliability.', icon: '🏆' },
+                            ].map((item, i) => (
+                                <div key={i} className="bg-white p-8 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                                    <div className="text-5xl mb-4">{item.icon}</div>
+                                    <h3 className="text-2xl font-bold mb-2 text-yellow-600">{item.label}</h3>
+                                    <p className="text-gray-700">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+              
+
+                </motion.div>
             </section>
 
             {/* Services Section */}
@@ -397,47 +406,58 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
 
             {/* ✅ Testimonials / Top Contributors Section */}
             <section id="" className="py-24 bg-gradient-to-br from-yellow-50 to-white">
-                <div className="max-w-6xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">
-                        What Our <span className="text-yellow-600">Top Contributors</span> Say
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {contributors.map((person, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 40 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.2 }}
-                                className="bg-white shadow-lg rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-                            >
-                                <div className="flex justify-center mb-4">
-                                    <User className="w-12 h-12 text-yellow-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
-                                <p className="text-sm text-gray-500 mb-3">{person.role}</p>
-                                <p className="text-gray-700 italic mb-4">“{person.testimonial}”</p>
-                                <div className="flex justify-center mb-3">
-                                    {Array.from({ length: person.rating }).map((_, i) => (
-                                        <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                                    ))}
-                                </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <div className="max-w-6xl mx-auto px-6 text-center">
+                        <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-gray-900">
+                            What Our <span className="text-yellow-600">Top Contributors</span> Say
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                            {contributors.map((person, index) => (
                                 <motion.div
-                                    className="flex justify-center items-center text-yellow-600 font-medium"
-                                    whileHover={{ scale: 1.05 }}
+                                    key={index}
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.2 }}
+                                    className="bg-white shadow-lg rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
                                 >
-                                    <ThumbsUp className="w-4 h-4 mr-1" /> {person.rating * 25} Kudos
+                                    <div className="flex justify-center mb-4">
+                                        <User className="w-12 h-12 text-yellow-600" />
+                                    </div>
+                                    <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
+                                    <p className="text-sm text-gray-500 mb-3">{person.role}</p>
+                                    <p className="text-gray-700 italic mb-4">“{person.testimonial}”</p>
+                                    <div className="flex justify-center mb-3">
+                                        {Array.from({ length: person.rating }).map((_, i) => (
+                                            <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                                        ))}
+                                    </div>
+                                    <motion.div
+                                        className="flex justify-center items-center text-yellow-600 font-medium"
+                                        whileHover={{ scale: 1.05 }}
+                                    >
+                                        <ThumbsUp className="w-4 h-4 mr-1" /> {person.rating * 25} Kudos
+                                    </motion.div>
                                 </motion.div>
-                            </motion.div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </motion.div>
             </section>
             {/* ✅ NEW: Video Testimonials Section - Slider */}
             <section
                 id="testimonials"
                 className="py-24 bg-gradient-to-br from-gray-900 to-gray-800"
             >
-                <div className="max-w-6xl mx-auto px-6">
+                   <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <div className="max-w-6xl mx-auto px-6">
                     {/* Section Header */}
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
@@ -572,6 +592,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion , videos}) {
                         }
                     `}
                 </style>
+
+                </motion.div>
             </section>
 
 
