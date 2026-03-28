@@ -13,19 +13,21 @@ import {
 
 export default function ClientLayout({ header, children }) {
   const user = usePage().props.auth.user;
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef = useRef();
 
     // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,7 +55,7 @@ export default function ClientLayout({ header, children }) {
            <div className="relative hidden sm:flex items-center space-x-4" ref={menuRef}>
 
             <button
-              onClick={() => setOpen(!open)}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center rounded-full bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600 transition"
             >
               <UserCircleIcon className="h-5 w-5 mr-1" />
@@ -69,11 +71,10 @@ export default function ClientLayout({ header, children }) {
             </button>
 
             {/* Dropdown Menu */}
-            {open && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
-                <Link
+            {dropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden transition ease-out duration-150">                <Link
                   href={route("profile.edit")}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block px-4 py-2 text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition duration-150"
                 >
                   Edit Profile
                 </Link>
@@ -81,7 +82,7 @@ export default function ClientLayout({ header, children }) {
                   href={route("logout")}
                   method="post"
                   as="button"
-                  className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block px-4 py-2 text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition duration-150"
                 >
                   Logout
                 </Link>
@@ -92,16 +93,16 @@ export default function ClientLayout({ header, children }) {
 
             <div className="sm:hidden flex items-center">
               <button
-                onClick={() => setOpen(!open)}
+                onClick={() => setMobileOpen(!mobileOpen)}
                 className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100"
               >
-                {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+                {mobileOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
               </button>
             </div>
           </div>
         </div>
 
-        {open && (
+        {mobileOpen && (
           <div className="sm:hidden bg-white border-t border-gray-200 shadow-md">
             <div className="space-y-1 p-3">
               <ResponsiveNavLink href="/services">Services</ResponsiveNavLink>
